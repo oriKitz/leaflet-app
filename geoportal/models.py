@@ -2,6 +2,7 @@ from geoportal import db
 from flask_login import UserMixin
 import datetime
 from geoportal import login_manager
+from sqlalchemy.inspection import inspect
 
 
 @login_manager.user_loader
@@ -44,15 +45,17 @@ class Query(db.Model):
     date_uploaded = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     last_update_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     query_text = db.Column(db.Text, nullable=False, default='')
+    parameters = db.relationship('QueryTextParameters', backref='query', lazy=True)
 
 
 class QueryTextParameters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     query_id = db.Column(db.Integer, db.ForeignKey('query.id'), nullable=False)
     parameter_name = db.Column(db.String(100), nullable=False)
-    parameter_python_var = db.Column(db.String(100), nullable=False)
     parameter_type = db.Column(db.String(100), nullable=False)
-    parameter_nullable = db.Column(db.Boolean(), nullable=False, server_default='0')
+
+    def serialize(self):
+        return {c: getattr(self, c) for c in inspect(self).attrs.keys() if c != 'query'}
 
 
 class Layer(db.Model):

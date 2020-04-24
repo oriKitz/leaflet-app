@@ -6,7 +6,13 @@
             <form method="POST" action="">
                 {{ form.hidden_tag() }}
                 <fieldset class="form-group">
-                    <legend class="border-bottom mb-4">Create New Query</legend>
+                    <legend class="border-bottom mb-2">Create New Query</legend>
+                    <div>
+                        <p class="m-0">Query text can contain variables to later be formatted.</p>
+                        <p>For example: SELECT * FROM users WHERE id = {user_id:number} AND creation_date > {min_time:datetime}</p>
+                        <p><b>Allowed datatypes:</b> number / datetime / string </p>
+                        <p>DO NOT put apostrophes around string datatypes. The server will do that for you.</p>
+                    </div>
                     {% for field in fields %}
                         <div class="form-group">
                             {{ form[field].label(class="form-control-label") }}

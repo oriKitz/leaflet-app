@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-    <button class="btn btn-default" onclick="getData()">Get Data</button>
-    <div id="myMap" class="mt-4"></div>
+<div id="myMap" class="mt-4"></div>
 {% endblock content %}
+{% block right_sidebar %}
+<form class="form-inline my-2 my-lg-0">
+    <input class="form-control mr-sm-2 mt-3" type="search" placeholder="Search" aria-label="Search" id="queries_search" onkeyup="filterQueries()">
+</form>
+{% for query in queries %}
+<div class="row" id="{{ query.id }}">
+    <div class="col" style="border-bottom: 1px solid #eeeded;">
+        <button name="query-selector">{{ query.query_name }}</button>
+        <form class="form-popup form-container" id="params-form" name="{{ query.id }}">
+        </form>
+    </div>
+</div>
+{% endfor %}
+{% endblock right_sidebar %}

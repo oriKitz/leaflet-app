@@ -3,23 +3,59 @@ from geoportal import app, db, bcrypt
 import sqlite3
 from geojson import Feature, Point, FeatureCollection
 import pandas as pd
-from flask_user import roles_required
+import re
 from flask_login import login_user, current_user, logout_user, login_required
 from .forms import RegistrationForm, LoginForm, NewQuery
-from .models import User, Query
+from .models import User, Query, QueryTextParameters
 
 
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    queries = Query.query.all()
+    return render_template('home.html', queries=queries)
 
 
-@app.route('/test')
-def test():
+@app.route('/revoke/<int:query_id>', methods=['GET', 'POST'])
+def revoke_query(query_id):
+    query_text = prepare_query(query_id, request.form)
+    return get_geojson_from_query(query_text)
+
+
+@app.route('/get_query_parameters/<int:query_id>')
+def query_parameters(query_id):
+    return jsonify([param.serialize() for param in Query.query.get(query_id).parameters])
+
+
+def handle_parameter(param_value, param_type):
+    if param_type == 'string':
+        return f"'{param_value}'"
+    if param_type == 'number':
+        return param_value
+    # If we got here it means we have datetime
+    return f"'{param_value}'" # It's ok when using sqlite
+
+
+def prepare_query(query_id, parameters_dict):
+    print(query_id)
+    query = Query.query.get(query_id)
+    query_text = query.query_text
+    print(query_text)
+    query_params_pattern = '{([^}]*):([^}]*)}'
+    query_params = re.findall(query_params_pattern, query_text)
+    query_params_dict = dict(query_params)
+    print(query_params_dict)
+    print(parameters_dict)
+    for param_name, param_value in parameters_dict.items():
+        param_type = query_params_dict[param_name]
+        query_text = query_text.replace('{' + f'{param_name}:{param_type}' + '}', handle_parameter(param_value, param_type))
+    return query_text
+
+
+def get_geojson_from_query(query):
     con = sqlite3.connect('geoportal/db/places.db')
     cur = con.cursor()
-    cur.execute('select longitude lon, latitude lat, start_time, location_name from google')
+    cur.execute(query)
     data = cur.fetchall()
     columns = [row[0] for row in cur.description]
     df = pd.DataFrame(columns=columns, data=data)
@@ -31,8 +67,10 @@ def test():
 def get_feature_from_row(row):
     properties = {}
     for col, value in row.items():
-        if col not in ['lon', 'lat']:
+        if col not in ['lon', 'lat', 'longitude', 'latitude']:
             properties[col] = value
+    if 'longitude' in row.keys():
+        return Feature(geometry=Point((row['longitude'], row['latitude'])), properties=properties)
     return Feature(geometry=Point((row['lon'], row['lat'])), properties=properties)
 
 
@@ -55,6 +93,14 @@ def new_query():
     if form.validate_on_submit():
         query = Query(query_name=form.query_name.data, db_name=form.db_name.data, query_text=form.query.data, user_id=current_user.id)
         db.session.add(query)
+        db.session.commit()
+
+        query_params_pattern = '{([^}]*):([^}]*)}'
+        query_params = re.findall(query_params_pattern, form.query.data)
+        for param in query_params:
+            query_parameter = QueryTextParameters(query_id=query.id, parameter_name=param[0], parameter_type=param[1])
+            db.session.add(query_parameter)
+
         db.session.commit()
         flash('Your query has been created!', 'success')
         return redirect(url_for('query', query_id=query.id))
