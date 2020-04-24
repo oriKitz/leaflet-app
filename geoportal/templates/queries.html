@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+    <form action="/query">
+        <button>New Query</button>
+    </form>
+    {% for query in queries %}
+        <div class="row">
+            <div class="col">
+                <a href="/query/{{ query.id }}">{{ query.query_name }}</a>
+            </div>
+            <div class="col">
+                <p>{{ query.user.username }}</p>
+            </div>
+            <div class="col">
+                <p>{{ query.last_update_time }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}

@@ -4,3 +4,17 @@ const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const tiles = L.tileLayer(tileUrl, { attribution });
 tiles.addTo(map);
 
+function popUp(f,l){
+    var out = [];
+    if (f.properties){
+        for(key in f.properties){
+            out.push(key+": "+f.properties[key]);
+        }
+        l.bindPopup(out.join("<br />"));
+    }
+}
+
+function getData() {
+    var jsonTest = new L.GeoJSON.AJAX("/test",{onEachFeature:popUp});
+    jsonTest.addTo(map)
+}
