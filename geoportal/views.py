@@ -7,6 +7,7 @@ import re
 from flask_login import login_user, current_user, logout_user, login_required
 from .forms import RegistrationForm, LoginForm, NewQuery
 from .models import User, Query, QueryTextParameters
+import datetime
 
 
 @app.route('/')
@@ -37,15 +38,11 @@ def handle_parameter(param_value, param_type):
 
 
 def prepare_query(query_id, parameters_dict):
-    print(query_id)
     query = Query.query.get(query_id)
     query_text = query.query_text
-    print(query_text)
     query_params_pattern = '{([^}]*):([^}]*)}'
     query_params = re.findall(query_params_pattern, query_text)
     query_params_dict = dict(query_params)
-    print(query_params_dict)
-    print(parameters_dict)
     for param_name, param_value in parameters_dict.items():
         param_type = query_params_dict[param_name]
         query_text = query_text.replace('{' + f'{param_name}:{param_type}' + '}', handle_parameter(param_value, param_type))
@@ -81,10 +78,40 @@ def queries():
     return render_template('queries.html', queries=all_queries)
 
 
-@app.route('/query/<int:query_id>')
+@app.route('/query/<int:query_id>', methods=['GET', 'POST'])
 def query(query_id):
+    form = NewQuery()
     query = Query.query.get(query_id)
-    return query.query_text
+
+    if form.validate_on_submit():
+        old_query = query.query_text
+        query.query_name = form.query_name.data
+        query.db_name = form.db_name.data
+        query.query_text = form.query.data
+        query.last_update_time = datetime.datetime.now()
+        db.session.commit()
+
+        if form.query.data != old_query:
+            params = query.parameters
+            for param in params:
+                db.session.delete(param)
+            db.session.commit()
+            query_params_pattern = '{([^}]*):([^}]*)}'
+            query_params = re.findall(query_params_pattern, form.query.data)
+            for param in query_params:
+                query_parameter = QueryTextParameters(query_id=query.id, parameter_name=param[0], parameter_type=param[1])
+                db.session.add(query_parameter)
+            db.session.commit()
+
+        flash('Your query has been updated!', 'success')
+        return redirect(url_for('query', query_id=query.id))
+
+    elif request.method == 'GET':
+        form.query_name.data = query.query_name
+        form.db_name.data = query.db_name
+        form.query.data = query.query_text
+
+    return render_template('query.html', title='Edit Query', form=form, fields=['query_name', 'db_name', 'query'], form_title='Edit Query', query_text=query.query_text)
 
 
 @app.route('/query', methods=['GET', 'POST'])
@@ -104,7 +131,7 @@ def new_query():
         db.session.commit()
         flash('Your query has been created!', 'success')
         return redirect(url_for('query', query_id=query.id))
-    return render_template('query.html', title='New Query', form=form, fields=['query_name', 'db_name', 'query'])
+    return render_template('query.html', title='New Query', form=form, fields=['query_name', 'db_name', 'query'], form_title='Create New Query')
 
 
 @app.route("/register", methods=['GET', 'POST'])

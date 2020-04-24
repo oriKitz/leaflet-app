@@ -7,17 +7,33 @@ tiles.addTo(map);
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 var drawControl = new L.Control.Draw({
+    draw: {
+        circle: false
+    },
     edit: {
         featureGroup: drawnItems
     }
 });
 map.addControl(drawControl);
 
+map.on('draw:created', function (e) {
+    console.log(1)
+    var layers = e.layers;
+//    layers.eachLayer(function (layer) {
+//         //do whatever you want; most likely save back to db
+//    });
+    });
+
+// This 2 lines disable somehow my queries shit:
+//var toolbar = L.Toolbar();
+//toolbar.addToolbar(map);
+
 function popUp(f,l){
     var out = [];
     if (f.properties){
         for(key in f.properties){
-            out.push(key+": "+f.properties[key]);
+//            out.push(key+": "+f.properties[key]);
+            out.push(f.properties[key]);
         }
         l.bindPopup(out.join("<br />"));
     }
@@ -49,20 +65,14 @@ function openForm(form) {
     })
 }
 
-function closeForm() {
+function closeForm(queryId) {
     $(document).ready(function() {
-        $("#params-form").html('')
+        $('form[name="' + queryId + '"]').html('')
     });
 }
 
 $(function() {
-    $('button[name = "cancel-btn"]').on("click", function() {
-        $(this).html('')
-    })
-})
-
-$(function() {
-    $('button[name = "query-selector"]').on("click", function() {
+    $('button[name="query-selector"]').on("click", function() {
         console.log($(this))
         button = $(this)
         form = button.next()
@@ -75,10 +85,14 @@ $(function() {
                 formHTML = ''
                 for (i = 0; i < data.length; i++) {
                     formHTML += '<label class="form-control-label">' + data[i].parameter_name + '</label>'
-                    formHTML += '<input class="form-control form-control-lg" type="text" id="' + data[i].parameter_name + '" name="' + data[i].parameter_name + '">'
+                    if (data[i].parameter_type == 'datetime') {
+                        formHTML += '<input class="form-control form-control-lg" type="date" id="' + data[i].parameter_name + '" name="' + data[i].parameter_name + '">'
+                    } else {
+                        formHTML += '<input class="form-control form-control-lg" type="text" id="' + data[i].parameter_name + '" name="' + data[i].parameter_name + '">'
+                    }
                 }
                 formHTML += '<button class="btn">Query</button>'
-                formHTML += '<button type="button" class="btn cancel" name="cancel-btn">Close</button>'
+                formHTML += '<button type="button" class="btn cancel" name="cancel-btn" onclick="closeForm(' + queryId +')">Close</button>'
                 console.log(formHTML)
                 form.html(formHTML)
             }
@@ -102,9 +116,7 @@ $(function() {
                success: function(data)
                {
                    console.log(data); // show response from the php script.
-                   L.geoJSON(data).bindPopup(function (layer) {
-                        return layer.feature.properties.description;
-                    }).addTo(map);
+                   L.geoJSON(data,{onEachFeature:popUp}).addTo(map);
                }
         });
     });
