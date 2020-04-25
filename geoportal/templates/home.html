@@ -4,17 +4,17 @@
 {% endblock content %}
 {% block right_sidebar %}
 <form class="form-inline my-2 my-lg-0">
-    <input class="form-control mr-sm-2 mt-3" type="search" placeholder="Search" aria-label="Search" id="queries_search" onkeyup="filterQueries()">
+    <input class="form-control mr-sm-2 mt-3 mb-2" type="search" placeholder="Search" aria-label="Search" id="queries_search" onkeyup="filterQueries()">
 </form>
+<div class="list-group">
 {% for query in queries %}
-<div class="row" id="{{ query.id }}">
-    <div class="col" style="border-bottom: 1px solid #eeeded;">
-        <button name="query-selector">{{ query.query_name }}</button>
+        <button name="query-selector" class="list-group-item" id="{{ query.id }}">{{ query.query_name }}</button>
         <form class="form-popup form-container" id="params-form" name="{{ query.id }}">
         </form>
-    </div>
-</div>
 {% endfor %}
+</div>
+<nav aria-label="Page navigation">
+</nav>
 {% endblock right_sidebar %}
 {% block fileend %}
 <script src="/static/js/map.js"></script>

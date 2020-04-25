@@ -2,9 +2,9 @@ function filterQueries() {
     input = document.getElementById("queries_search");
     filter = input.value.toUpperCase();
     div = document.getElementById("right-sidebar");
-    rows = div.getElementsByClassName("row");
+    rows = div.getElementsByClassName("list-group")[0].children;
     for (i = 0; i < rows.length; i++) {
-        txtValue = rows[i].textContent || a[i].innerText;
+        txtValue = rows[i].textContent;
         if (txtValue.toUpperCase().indexOf(filter) > -1) {
             rows[i].style.display = "";
         } else {
@@ -28,7 +28,9 @@ function openForm(form) {
 
 function closeForm(queryId) {
     $(document).ready(function() {
-        $('form[name="' + queryId + '"]').html('')
+        form = $('form[name="' + queryId + '"]')
+        form.html('')
+        form.removeClass("mt-2")
     });
 }
 function closeFormQuery() {
@@ -37,7 +39,7 @@ function closeFormQuery() {
     });
 }
 
-function getParametersFormHTML(data) {
+function getParametersFormHTML(data, queryId) {
     formHTML = ''
     for (i = 0; i < data.length; i++) {
         formHTML += '<label class="form-control-label">' + data[i].parameter_name + '</label>'
@@ -48,6 +50,7 @@ function getParametersFormHTML(data) {
         }
     }
     formHTML += '<button class="btn">Query</button>'
+    formHTML += '<a class="btn" href="/query/' + queryId +'" target="_blank">Edit</a>'
     return formHTML
 }
 
@@ -56,15 +59,16 @@ $(function() {
         console.log($(this))
         button = $(this)
         form = button.next()
-        queryId = button.parent().parent().attr('id')
+        queryId = button.attr('id')
         console.log(queryId)
         $.ajax({
             type: "GET",
             url: '/get_query_parameters/' + queryId,
             success: function(data) {
-                formHTML = getParametersFormHTML(data)
+                formHTML = getParametersFormHTML(data, queryId)
                 formHTML += '<button type="button" class="btn cancel" name="cancel-btn" onclick="closeForm(' + queryId +')">Close</button>'
                 console.log(formHTML)
+                form.addClass("mt-2")
                 form.html(formHTML)
             }
         })
@@ -138,7 +142,7 @@ $(function() {
             type: "GET",
             url: '/get_query_parameters/' + queryId,
             success: function(data) {
-                formHTML = getParametersFormHTML(data)
+                formHTML = getParametersFormHTML(data, queryId)
                 formHTML += '<button type="button" class="btn cancel" name="cancel-btn" onclick="closeFormQuery()">Close</button>'
                 console.log(formHTML)
                 $("#params-form").html(formHTML)
