@@ -91,7 +91,7 @@ function toggleLayer(layerId) {
     })
 };
 
-function getShowLayer(layerId) (
+function getShowLayer(layerId) {
     $(function() {
         $.ajax({
              type: "GET",
@@ -102,7 +102,7 @@ function getShowLayer(layerId) (
              }
         });
     })
-)
+}
 
 function toggleMarkerModal() {
     $(function() {
