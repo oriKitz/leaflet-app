@@ -28,13 +28,38 @@ map.on('draw:created', function (e) {
 //var toolbar = L.Toolbar();
 //toolbar.addToolbar(map);
 
-function popUp(f,l){
+function popUp(f, l){
     var out = [];
-    if (f.properties){
-        for(key in f.properties){
+    if (f.properties) {
+        for (key in f.properties) {
 //            out.push(key+": "+f.properties[key]);
             out.push(f.properties[key]);
         }
         l.bindPopup(out.join("<br />"));
+    }
+}
+
+function addLayer(data) {
+    icon = getIcon()
+    L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
+        return L.marker(latlng, {
+            icon: icon
+        })
+     }}).addTo(map);
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getIcon() {
+    if (Array.isArray(unused_icons) && unused_icons.length) {
+        icon = unused_icons.shift()
+        used_icons.push(icon)
+        return icon
+    } else {
+        return icons[getRandomInt(0, 7)]
     }
 }

@@ -79,11 +79,8 @@ $(function() {
 $(function() {
     $('form[id="params-form"]').submit(function(e) {
         e.preventDefault();
-        console.log('here')
-
         var form = $(this);
         var url = form.attr('action');
-        console.log(form.serialize())
         if (window.location.pathname.startsWith('/query')) {
             pathname = window.location.pathname
             splittedPathname = pathname.split("/")
@@ -94,7 +91,6 @@ $(function() {
                  data: form.serialize(), // serializes the form's elements.
                  success: function(data)
                  {
-                     console.log(data); // show response from the php script.
                      $("#results-table").html(data)
                      paging()
                  }
@@ -106,8 +102,7 @@ $(function() {
                  data: form.serialize(), // serializes the form's elements.
                  success: function(data)
                  {
-                     console.log(data); // show response from the php script.
-                     L.geoJSON(data,{onEachFeature:popUp}).addTo(map);
+                     addLayer(data)
                  }
             });
         }
