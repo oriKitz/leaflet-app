@@ -3,28 +3,30 @@
 <div class="row mt-4">
     <div class="col-md-8">
         <div class="content-section">
-            <form method="POST" action="" class="form-horizontal">
+            <form id="query-form" method="POST" action="" class="form-horizontal">
                 {{ form.hidden_tag() }}
                     <h4 class="border-bottom mb-2 pb-1">{{ form_title }}</h4>
                     <div>
                         <p class="m-0">Query text can contain variables to later be formatted.</p>
-                        <p>For example: SELECT * FROM users WHERE id = {user_id:number} AND creation_date > {min_time:datetime}</p>
-                        <p><b>Allowed datatypes:</b> number / datetime / string </p>
-                        <p>DO NOT put apostrophes around string datatypes. The server will do that for you.</p>
+                        <p class="m-0">For example: SELECT * FROM users WHERE id = {user_id:number} AND creation_date > {min_time:datetime}</p>
+                        <p class="m-0"><b>Allowed datatypes:</b> number / datetime / string. You must specify datatypes!</p>
+                        <p class="m-0">DO NOT put apostrophes around string datatypes. The server will do that for you.</p>
+                        <p class="mb-3 border-bottom">Query results must contain lon,lat columns or longitude,latitude columns</p>
                     </div>
                     {% for field in fields %}
-                        <div class="form-group control-group">
-                            {{ form[field].label(class="form-control-label control-label col-sm-2") }}
+                        <div class="form-group control-group row m-3">
+                            {{ form[field].label(class="form-control-label control-label col-sm-2 pt-2 bold") }}
                             {% if not form[field].errors %}
                                 {% if field == 'query' %}
                                     <div class="col-sm-10">
                                     <div id="query">{% if query_text %}{{ query_text }}{% endif %}</div>
                                     <textarea name="query" style="display: none;"></textarea>
+                                    </div>
                                 {% else %}
                                     <div class="col-sm-8">
                                     {{ form[field](class="form-control form-control-lg") }}
+                                    </div>
                                 {% endif %}
-                            </div>
                             {% else %}
                                 {{ form[field](class="form-control form-control-lg is-invalid") }}
                                 <div class="invalid-feedback">
@@ -35,14 +37,17 @@
                             {% endif %}
                         </div>
                     {% endfor %}
-                    <!--<div class="form-group">-->
-                        <!--<div id="editor" class="editor"></div>-->
-                    <!--</div>-->
-                <div class="form-group">
+                <div class="form-group row">
                     {{ form.submit(class="btn btn-outline-info") }}
+                    <input class="btn btn-outline-info ml-3" id="load-results" name="loader" type="button" value="Query Results">
+                    <p class="pt-3 mb-0 ml-1">(Only works after you save the query)</p>
                 </div>
             </form>
+            <form class="form-popup form-container" id="params-form" name="params-form"></form>
         </div>
+    </div>
+    <div id="results">
+        <div id="results-table" class="mt-3"></div>
     </div>
 </div>
 {% endblock content %}

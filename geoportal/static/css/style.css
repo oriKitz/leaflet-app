@@ -9,3 +9,7 @@
     left: 0;
     height: 200px;
 }
+
+.bold {
+  font-weight: bold;
+}

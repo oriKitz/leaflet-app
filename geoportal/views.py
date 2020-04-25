@@ -23,6 +23,18 @@ def revoke_query(query_id):
     return get_geojson_from_query(query_text)
 
 
+@app.route('/table_results/<int:query_id>', methods=['GET', 'POST'])
+def query_table_results(query_id):
+    query_text = prepare_query(query_id, request.form)
+    con = sqlite3.connect('geoportal/db/places.db')
+    cur = con.cursor()
+    cur.execute(query_text)
+    data = cur.fetchall()
+    columns = [row[0] for row in cur.description]
+    df = pd.DataFrame(columns=columns, data=data)
+    return df.to_html(index=None, classes=['table', 'table-bordered', 'table-hover', 'table-condensed'], justify='center', table_id='full-results')
+
+
 @app.route('/get_query_parameters/<int:query_id>')
 def query_parameters(query_id):
     return jsonify([param.serialize() for param in Query.query.get(query_id).parameters])
@@ -104,7 +116,7 @@ def query(query_id):
             db.session.commit()
 
         flash('Your query has been updated!', 'success')
-        return redirect(url_for('query', query_id=query.id))
+        return jsonify({'status': 'success'})
 
     elif request.method == 'GET':
         form.query_name.data = query.query_name
