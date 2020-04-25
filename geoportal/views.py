@@ -1,12 +1,13 @@
 from flask import render_template, url_for, request, jsonify, redirect, flash, render_template_string
 from geoportal import app, db, bcrypt
 import sqlite3
-from geojson import Feature, Point, FeatureCollection
+import geojson
+from geojson import Feature, FeatureCollection
 import pandas as pd
 import re
 from flask_login import login_user, current_user, logout_user, login_required
 from .forms import RegistrationForm, LoginForm, NewQuery
-from .models import User, Query, QueryTextParameters
+from .models import User, Query, QueryTextParameters, Layer, Point
 import datetime
 
 
@@ -14,7 +15,8 @@ import datetime
 @app.route('/home')
 def home():
     queries = Query.query.all()
-    return render_template('home.html', queries=queries)
+    layers = Layer.query.filter_by(user_id=current_user.id).all()
+    return render_template('home.html', queries=queries, layers=layers)
 
 
 @app.route('/revoke/<int:query_id>', methods=['GET', 'POST'])
@@ -79,8 +81,33 @@ def get_feature_from_row(row):
         if col not in ['lon', 'lat', 'longitude', 'latitude']:
             properties[col] = value
     if 'longitude' in row.keys():
-        return Feature(geometry=Point((row['longitude'], row['latitude'])), properties=properties)
-    return Feature(geometry=Point((row['lon'], row['lat'])), properties=properties)
+        return Feature(geometry=geojson.Point((row['longitude'], row['latitude'])), properties=properties)
+    return Feature(geometry=geojson.Point((row['lon'], row['lat'])), properties=properties)
+
+
+@app.route('/points/<int:layer_id>')
+def get_layer_geojson(layer_id):
+    points = Point.query.filter_by(layer_id=layer_id).all()
+    features = []
+    for point in points:
+        features.append(Feature(geometry=geojson.Point((point.lon, point.lat)), properties={'description': point.description}))
+    return FeatureCollection(features)
+
+
+@app.route('/point', methods=['GET', 'POST'])
+def update_point():
+    lon = request.form['lon']
+    lat = request.form['lat']
+    description = request.form['description']
+    layer = request.form['layer']
+    layer_name = layer[:layer.rfind(',')]
+    layer_username = layer[layer.rfind(',') + 2:]
+    user = User.query.filter_by(username=layer_username).first()
+    layer = Layer.query.filter_by(name=layer_name).filter_by(user_id=user.id).first()
+    point = Point(layer_id=layer.id, lon=lon, lat=lat, description=description)
+    db.session.add(point)
+    db.session.commit()
+    return jsonify({'status': 'success'})
 
 
 @app.route('/queries')

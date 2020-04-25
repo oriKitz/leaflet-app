@@ -96,6 +96,7 @@ $(function() {
                  }
             });
         } else {
+            console.log(form.serialize())
             $.ajax({
                  type: "POST",
                  url: '/revoke/' + form.attr('name'),

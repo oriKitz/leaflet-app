@@ -71,5 +71,5 @@ var blackIcon = new L.Icon({
 });
 
 const icons = [greenIcon, blueIcon, redIcon, orangeIcon, violetIcon, greyIcon, blackIcon, goldIcon]
-var unused_icons = [greenIcon, blueIcon, redIcon, orangeIcon, violetIcon, greyIcon, blackIcon, goldIcon]
+var unused_icons = [greenIcon, redIcon, orangeIcon, violetIcon, greyIcon, blackIcon, goldIcon]
 var used_icons = []

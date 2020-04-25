@@ -22,13 +22,15 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
-from .models import User, Role, Query, QueryTextParameters
+from .models import User, Role, Query, QueryTextParameters, Point, Layer
 # from .utils import MyModelView
 
 # user_manager = UserManager(app, db, User)
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Query, db.session))
 admin.add_view(ModelView(QueryTextParameters, db.session))
+admin.add_view(ModelView(Point, db.session))
+admin.add_view(ModelView(Layer, db.session))
 # admin.add_view(MyModelView(User, db.session))
 # user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 # security = Security(app, user_datastore)

@@ -47,6 +47,9 @@ class Query(db.Model):
     query_text = db.Column(db.Text, nullable=False, default='')
     parameters = db.relationship('QueryTextParameters', backref='query', lazy=True)
 
+    def __repr__(self):
+        return self.query_name
+
 
 class QueryTextParameters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -66,6 +69,9 @@ class Layer(db.Model):
     points = db.relationship('Point', backref='layer', lazy=True)
     polygons = db.relationship('Polygon', backref='layer', lazy=True)
 
+    def __repr__(self):
+        return self.name
+
 
 class Point(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -74,6 +80,9 @@ class Point(db.Model):
     lat = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, default='')
     color = db.Column(db.String(20), default='blue')
+
+    def __repr__(self):
+        return f'{self.lon}, {self.lat}: {self.description}'
 
 
 class Polygon(db.Model):
