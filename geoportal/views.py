@@ -10,6 +10,7 @@ from .forms import RegistrationForm, LoginForm, NewQuery
 from .models import User, Query, QueryTextParameters, Layer, Point, UserMarkedQuery
 import datetime
 from sqlalchemy import and_
+from time import sleep
 
 
 def marked_queries_first(queries):
@@ -53,10 +54,10 @@ def home():
     return render_template('home.html', queries=queries, layers=layers)
 
 
-@app.route('/revoke/<int:query_id>', methods=['GET', 'POST'])
-def revoke_query(query_id):
+@app.route('/invoke/<int:query_id>/<string:token>', methods=['GET', 'POST'])
+def invoke_query(query_id, token):
     query_text = prepare_query(query_id, request.form)
-    return get_geojson_from_query(query_text)
+    return {'geojson': get_geojson_from_query(query_text), 'token': token}
 
 
 @app.route('/table_results/<int:query_id>', methods=['GET', 'POST'])

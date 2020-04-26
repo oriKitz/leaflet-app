@@ -1,3 +1,5 @@
+var queryRunningInstances = {}
+
 function filterQueries() {
     input = document.getElementById("queries_search");
     filter = input.value.toUpperCase();
@@ -97,13 +99,20 @@ $(function() {
             });
         } else {
             console.log(form.serialize())
+            queryId = form.attr('name')
+            var tempId = makeId(10)
+            var htmlData = '<div class="row" id="' + tempId + '">'
+            htmlData += '<div class="loadingio-spinner-spinner-kly0lqmixgq"><div class="ldio-np83wdslazg"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>'
+            htmlData += '<p class="mt-2 pt-1">Running query ID: ' + form.attr('name') + '</p></div>'
+            $("#queries-running").append(htmlData)
             $.ajax({
                  type: "POST",
-                 url: '/revoke/' + form.attr('name'),
+                 url: '/invoke/' + queryId + '/' + tempId,
                  data: form.serialize(), // serializes the form's elements.
                  success: function(data)
                  {
-                     addLayer(data)
+                     addLayer(data['geojson'])
+                     $("#" + data['token']).html('')
                  }
             });
         }
@@ -176,3 +185,14 @@ function toggleFavOn(queryId) {
         input[0].checked = true
     })
 }
+
+function makeId(length) {
+   var result           = '';
+   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   var charactersLength = characters.length;
+   for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
+
