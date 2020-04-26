@@ -191,7 +191,6 @@ def queries():
 @app.route('/run_query/<string:token>', methods=['POST'])
 def run_query(token):
     query = request.form['query']
-    print(query)
     return {'geojson': get_geojson_from_query(query), 'token': token}
 
 

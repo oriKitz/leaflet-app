@@ -199,7 +199,9 @@ function makeId(length) {
 $(function() {
     $('form[id="modal-query-form"]').submit(function(e) {
         e.preventDefault();
-        query = $("#query").val()
+        query = $("#query-big")[0].innerText
+        selectIndex = query.toLowerCase().indexOf('select')
+        query = query.substring(selectIndex)
         var form_serialized = "query=" + query
         var tempId = makeId(10)
         var htmlData = '<div class="row" id="' + tempId + '">'

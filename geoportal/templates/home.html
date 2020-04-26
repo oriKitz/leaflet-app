@@ -110,8 +110,10 @@
             <div class="modal-body">
                 <form id="modal-query-form" class="form">
                     <div class="form-group">
-                        <label for="query" class="control-label">Query:</label>
-                        <input class="form-control" id="query">
+                        <!--<label for="query" class="control-label">Query:</label>-->
+                        <!--<input class="form-control" id="query">-->
+                        <div id="query-big">{% if query_text %}{{ query_text }}{% endif %}</div>
+                        <textarea name="query-big" style="display: none;"></textarea>
                     </div>
                     <div class="form-group row">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -158,4 +160,17 @@
 {% block fileend %}
 <script src="/static/js/map.js"></script>
 {% endblock fileend %}
+
+{% block javascript %}
+var editor = ace.edit("query-big");
+editor.setTheme("ace/theme/monokai");
+editor.session.setMode("ace/mode/sql");
+$(function() {
+    var textarea = $('textarea[name="query-big"]');
+    editor.getSession().on("change", function () {
+        textarea.val(editor.getSession().getValue());
+    });
+});
+{% endblock javascript %}
+
 
