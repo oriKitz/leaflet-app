@@ -9,6 +9,11 @@ from flask_login import login_user, current_user, logout_user, login_required
 from .forms import RegistrationForm, LoginForm, NewQuery
 from .models import User, Query, QueryTextParameters, Layer, Point, UserMarkedQuery
 import datetime
+from sqlalchemy import and_
+
+
+def marked_queries_first(queries):
+    return sorted(queries, key=lambda query: UserMarkedQuery.query.filter(and_(UserMarkedQuery.query_id == query.id, UserMarkedQuery.user_id == current_user.id)).first() is not None, reverse=True)
 
 
 def get_allowd_queries():
@@ -19,6 +24,7 @@ def get_allowd_queries():
             if query.public or (query.only_team and User.query.get(query.user_id).team_id == current_user.team_id) or query.user_id == current_user.id:
                 authorized_queries.append(query)
         queries = authorized_queries
+        queries = marked_queries_first(queries)
     else:
         queries = Query.query.filter_by(public=True).all()
 
@@ -135,7 +141,7 @@ def update_point():
     point = Point(layer_id=layer.id, lon=lon, lat=lat, description=description)
     db.session.add(point)
     db.session.commit()
-    return jsonify({'status': 'success'})
+    return jsonify({'status': 'success', 'layer_id': layer.id})
 
 
 @app.route('/layer', methods=['GET', 'POST'])

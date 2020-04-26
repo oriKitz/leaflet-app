@@ -21,23 +21,17 @@
                 <td>
                     <div class="pretty p-icon p-toggle p-plain">
                         <input id="mark-{{ query.id }}" type="checkbox" name="fav-checkbox" class=""/>
-                        {% if query.id in marked_queries %}
-                        <div class="state p-on">
-                            <i class="icon fa fa-heart-o "></i>
-                        </div>
-                        <div class="state p-off p-info-o">
-                            <i class="icon fa fa-heart"></i>
-                        </div>
-                        {% else %}
                         <div class="state p-off">
                             <i class="icon fa fa-heart-o "></i>
                         </div>
                         <div class="state p-on p-info-o">
                             <i class="icon fa fa-heart"></i>
                         </div>
-                        {% endif %}
                     </div>
                 </td>
+                {% if query.id in marked_queries %}
+                    <script>toggleFavOn({{ query.id }})</script>
+                {% endif %}
                 <td> <a href="/query/{{ query.id }}">{{ query.query_name }}</a></td>
                 <td>{{ query.user.full_name }}</td>
                 <td>{{ query.last_update_time }}</td>

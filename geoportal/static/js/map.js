@@ -17,6 +17,7 @@ var drawControl = new L.Control.Draw({
 map.addControl(drawControl);
 var latestLon, latestLat;
 var userLayers = {}
+var latestLayer;
 
 map.on('draw:created', function (e) {
     console.log(e)
@@ -24,7 +25,7 @@ map.on('draw:created', function (e) {
     var layer = e.layer;
     latestLat = layer._latlng.lat
     latestLon = layer._latlng.lng
-    drawnItems.addLayer(layer);
+    latestLayer = layer
     toggleMarkerModal()
 });
 
@@ -149,6 +150,7 @@ $(function() {
              success: function(data)
              {
                  console.log(data)
+                userLayers[data['layer_id']].addLayer(latestLayer)
              }
         });
         toggleMarkerModal()

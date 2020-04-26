@@ -169,3 +169,10 @@ $(function() {
         });
     })
 })
+
+function toggleFavOn(queryId) {
+    $(function() {
+        input = $("#mark-" + queryId)
+        input[0].checked = true
+    })
+}
