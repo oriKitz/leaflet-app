@@ -110,6 +110,15 @@ def update_point():
     return jsonify({'status': 'success'})
 
 
+@app.route('/layer', methods=['GET', 'POST'])
+def create_layer():
+    name = request.form['name']
+    layer = Layer(name=name, user_id=current_user.id)
+    db.session.add(layer)
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+
 @app.route('/queries')
 @login_required
 def queries():

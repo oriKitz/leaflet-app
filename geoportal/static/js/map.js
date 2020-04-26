@@ -110,6 +110,12 @@ function toggleMarkerModal() {
     })
 }
 
+function toggleLayerModal() {
+    $(function() {
+        $("#add-layer").modal('toggle')
+    })
+}
+
 $(function() {
     $('#add-point').on('shown.bs.modal', function () {
         $('#description').focus()
@@ -137,3 +143,21 @@ $(function() {
     });
 });
 
+$(function() {
+    $('form[id="modal-layer-form"]').submit(function(e) {
+        e.preventDefault();
+        var form = $(this);
+        name = $("#name").val()
+        form_serialized = "name=" + name
+        $.ajax({
+             type: "POST",
+             url: '/layer',
+             data: form_serialized, // serializes the form's elements.
+             success: function(data)
+             {
+                 console.log(data)
+             }
+        });
+        location.reload()
+    });
+});

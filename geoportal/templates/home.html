@@ -1,6 +1,31 @@
 {% extends "base.html" %}
 
 {% block left_sidebar %}
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add-layer">
+  New Layer
+</button>
+<div class="modal fade" id="add-layer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Layer</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="modal-layer-form" class="form">
+                    <div class="form-group">
+                        <label for="name" class="control-label">Name:</label>
+                        <input class="form-control" id="name">
+                    </div>
+                    <div class="form-group row">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save layer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% for layer in layers %}
 <div class="row ml-2 mt-3">
     <label class="checkbox mr-3">
