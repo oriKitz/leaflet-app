@@ -116,13 +116,16 @@ $(function() {
         console.log('here')
         var form = $(this);
         $.ajax({
-               type: "POST",
-               url: window.location.pathname,
-               data: form.serialize(), // serializes the form's elements.
-               success: function(data)
-               {
-                   alert('success')
-               }
+            type: "POST",
+            url: window.location.pathname,
+            data: form.serialize(), // serializes the form's elements.
+            success: function(data)
+            {
+                alert('success')
+                if (window.location.pathname.endsWith('query')) { // Only when we are in the edit page
+                    window.location.href = "/query/" + data['query_id'];
+                }
+            }
         });
     });
 });

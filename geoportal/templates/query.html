@@ -37,6 +37,15 @@
                             {% endif %}
                         </div>
                     {% endfor %}
+                   <div class="form-check m-1">
+                        {{ form.only_me(class="form-check-input") }}
+                        {{ form.only_me.label(class="form-check-label") }}
+                   </div>
+                   <div class="form-check m-1">
+                       {{ form.only_team(class="form-check-input") }}
+                       {{ form.only_team.label(class="form-check-label") }}
+                   </div>
+                   <p class="m-1 mb-3">Queries are public by default.</p>
                 <div class="form-group row">
                     {{ form.submit(class="btn btn-outline-info") }}
                     <input class="btn btn-outline-info ml-3" id="load-results" name="loader" type="button" value="Query Results">

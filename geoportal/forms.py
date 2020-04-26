@@ -35,4 +35,6 @@ class NewQuery(FlaskForm):
     query_name = StringField('Query Name', validators=[DataRequired(), Length(min=2, max=120)])
     db_name = StringField('DB', validators=[Length(max=20)])
     query = TextAreaField('Query', validators=[DataRequired()])
+    only_me = BooleanField('Private query (only I can see it)')
+    only_team = BooleanField('Shared only to my team')
     submit = SubmitField('Save')

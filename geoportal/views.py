@@ -7,15 +7,30 @@ import pandas as pd
 import re
 from flask_login import login_user, current_user, logout_user, login_required
 from .forms import RegistrationForm, LoginForm, NewQuery
-from .models import User, Query, QueryTextParameters, Layer, Point
+from .models import User, Query, QueryTextParameters, Layer, Point, load_user
 import datetime
 
 
 @app.route('/')
 @app.route('/home')
 def home():
-    queries = Query.query.all()
-    layers = Layer.query.filter_by(user_id=current_user.id).all()
+    if current_user.is_authenticated:
+        queries = Query.query.order_by(Query.only_user.desc()).all()
+        authorized_queries = []
+        for query in queries:
+            if query.public or (query.only_team and User.query.get(query.user_id).team_id == current_user.team_id) or query.user_id == current_user.id:
+                authorized_queries.append(query)
+        queries = authorized_queries
+
+        layers = Layer.query.all()
+        authorized_layers = []
+        for layer in layers:
+            if (layer.only_team and User.query.get(layer.user_id).team_id == current_user.team_id) or layer.user_id == current_user.id:
+                authorized_layers.append(layer)
+        layers = authorized_layers
+    else:
+        queries = Query.query.filter_by(public=True).all()
+        layers = []
     return render_template('home.html', queries=queries, layers=layers)
 
 
@@ -132,6 +147,10 @@ def query(query_id):
     query = Query.query.get(query_id)
 
     if form.validate_on_submit():
+        query.only_team = form.only_team.data
+        query.only_user = form.only_me.data
+        query.public = (not query.only_team) and (not query.only_user)
+
         old_query = query.query_text
         query.query_name = form.query_name.data
         query.db_name = form.db_name.data
@@ -158,6 +177,8 @@ def query(query_id):
         form.query_name.data = query.query_name
         form.db_name.data = query.db_name
         form.query.data = query.query_text
+        form.only_team.data = query.only_team
+        form.only_me.data = query.only_user
 
     return render_template('query.html', title='Edit Query', form=form, fields=['query_name', 'db_name', 'query'], form_title='Edit Query', query_text=query.query_text)
 
@@ -166,7 +187,10 @@ def query(query_id):
 def new_query():
     form = NewQuery()
     if form.validate_on_submit():
-        query = Query(query_name=form.query_name.data, db_name=form.db_name.data, query_text=form.query.data, user_id=current_user.id)
+        only_team = form.only_team.data
+        only_user = form.only_me.data
+        public = (not only_team) and (not only_user)
+        query = Query(query_name=form.query_name.data, db_name=form.db_name.data, query_text=form.query.data, user_id=current_user.id, only_user=only_user, only_team=only_team, public=public)
         db.session.add(query)
         db.session.commit()
 
@@ -178,7 +202,8 @@ def new_query():
 
         db.session.commit()
         flash('Your query has been created!', 'success')
-        return redirect(url_for('query', query_id=query.id))
+        return jsonify({'query_id': query.id})
+        # return redirect(url_for('query', query_id=query.id))
     return render_template('query.html', title='New Query', form=form, fields=['query_name', 'db_name', 'query'], form_title='Create New Query')
 
 

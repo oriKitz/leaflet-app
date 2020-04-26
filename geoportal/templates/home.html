@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
 {% block left_sidebar %}
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add-layer">
+{% if current_user.is_authenticated %}
+<button type="button" class="btn btn-primary btn-lg mb-3 mt-3" data-toggle="modal" data-target="#add-layer">
   New Layer
 </button>
+{% endif %}
 <div class="modal fade" id="add-layer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -26,14 +28,30 @@
         </div>
     </div>
 </div>
-{% for layer in layers %}
-<div class="row ml-2 mt-3">
-    <label class="checkbox mr-3">
-        <input type="checkbox" id="checkbox-{{ layer.id }}" onclick="toggleLayer({{ layer.id }})">
-    </label>
-    <p>{{ layer.name }}</p>
-</div>
-{% endfor %}
+{% if current_user.is_authenticated %}
+    <h5 class="disply-5">Your Private Layers:</h5>
+    {% for layer in layers %}
+        {% if layer.only_user %}
+        <div class="row ml-2 mt-3">
+            <label class="checkbox mr-3">
+                <input type="checkbox" id="checkbox-{{ layer.id }}" onclick="toggleLayer({{ layer.id }})">
+            </label>
+            <p>{{ layer.name }}</p>
+        </div>
+        {% endif %}
+    {% endfor %}
+    <h5 class="disply-5">Team Layers:</h5>
+    {% for layer in layers %}
+        {% if layer.only_team %}
+        <div class="row ml-2 mt-3">
+            <label class="checkbox mr-3">
+                <input type="checkbox" id="checkbox-{{ layer.id }}" onclick="toggleLayer({{ layer.id }})">
+            </label>
+            <p>{{ layer.name }}</p>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
 {% endblock left_sidebar %}
 
 {% block content %}
@@ -78,12 +96,29 @@
 <form class="form-inline my-2 my-lg-0">
     <input class="form-control mr-sm-2 mt-3 mb-2" type="search" placeholder="Search" aria-label="Search" id="queries_search" onkeyup="filterQueries()">
 </form>
-<div class="list-group">
-{% for query in queries %}
-        <button name="query-selector" class="list-group-item" id="{{ query.id }}">{{ query.query_name }}</button>
+<div class="col-sm-10 pl-0">
+    <div class="list-group">
+    {% for query in queries %}
+        <button name="query-selector" class="list-group-item" id="{{ query.id }}" style="text-align: justify;">
+            <div class="row justify-content-between pr-2">
+                <div class="col-sm-10">
+                    {{ query.query_name }}
+                </div>
+                <div class="col-sm-1">
+                    {% if query.only_user %}
+                    <span class="fa fa-user"></span>
+                    {% elif query.only_team %}
+                        <span class="fa fa-users"></span>
+                    {% else %}
+                        <span class="fa fa-globe"></span>
+                    {% endif %}
+                </div>
+            </div>
+        </button>
         <form class="form-popup form-container" id="params-form" name="{{ query.id }}">
         </form>
-{% endfor %}
+    {% endfor %}
+    </div>
 </div>
 <nav aria-label="Page navigation">
 </nav>

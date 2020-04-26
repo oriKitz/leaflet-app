@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(20), nullable=False, default='')
     last_name = db.Column(db.String(20), nullable=False, default='')
     password = db.Column(db.String(60), nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
     roles = db.relationship('Role', secondary='user_roles')
     layers = db.relationship('Layer', backref='user', lazy=True)
     queries = db.relationship('Query', backref='user', lazy=True)
@@ -45,10 +46,17 @@ class Query(db.Model):
     date_uploaded = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     last_update_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     query_text = db.Column(db.Text, nullable=False, default='')
+    only_user = db.Column(db.Boolean, default=False)
+    only_team = db.Column(db.Boolean, default=False)
+    public = db.Column(db.Boolean, default=True)
     parameters = db.relationship('QueryTextParameters', backref='query', lazy=True)
 
     def __repr__(self):
         return self.query_name
+
+    @staticmethod
+    def get_user(user_id):
+        return User.query.get(user_id)
 
 
 class QueryTextParameters(db.Model):
@@ -66,6 +74,9 @@ class Layer(db.Model):
     name = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     default_color = db.Column(db.String(20), default='blue')
+    only_user = db.Column(db.Boolean, default=True)
+    only_team = db.Column(db.Boolean, default=False)
+    public = db.Column(db.Boolean, default=False)
     points = db.relationship('Point', backref='layer', lazy=True)
     polygons = db.relationship('Polygon', backref='layer', lazy=True)
 
@@ -99,3 +110,9 @@ class PolygonCoordinate(db.Model):
     index = db.Column(db.Integer, nullable=False)
     lon = db.Column(db.Float, nullable=False)
     lat = db.Column(db.Float, nullable=False)
+
+
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False)
+    users = db.relationship('User', backref='team', lazy=True)
