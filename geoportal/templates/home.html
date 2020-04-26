@@ -97,6 +97,33 @@
 {% endblock content %}
 
 {% block right_sidebar %}
+<button type="button" class="btn btn-primary mb-3 mt-3" data-toggle="modal" data-target="#run-query">
+  <span class="fa fa-plus mr-2"></span>Run a Query
+</button>
+<div class="modal fade" id="run-query" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Run Query</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="modal-query-form" class="form">
+                    <div class="form-group">
+                        <label for="query" class="control-label">Query:</label>
+                        <input class="form-control" id="query">
+                    </div>
+                    <div class="form-group row">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Query</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <form class="form-inline my-2 my-lg-0">
     <input class="form-control mr-sm-2 mt-3 mb-2" type="search" placeholder="Search" aria-label="Search" id="queries_search" onkeyup="filterQueries()">
 </form>

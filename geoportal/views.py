@@ -188,6 +188,13 @@ def queries():
     return render_template('queries.html', queries=queries, marked_queries=marked_queries)
 
 
+@app.route('/run_query/<string:token>', methods=['POST'])
+def run_query(token):
+    query = request.form['query']
+    print(query)
+    return {'geojson': get_geojson_from_query(query), 'token': token}
+
+
 @app.route('/query/<int:query_id>', methods=['GET', 'POST'])
 def query(query_id):
     form = NewQuery()

@@ -196,3 +196,33 @@ function makeId(length) {
    return result;
 }
 
+$(function() {
+    $('form[id="modal-query-form"]').submit(function(e) {
+        e.preventDefault();
+        query = $("#query").val()
+        var form_serialized = "query=" + query
+        var tempId = makeId(10)
+        var htmlData = '<div class="row" id="' + tempId + '">'
+        htmlData += '<div class="loadingio-spinner-spinner-kly0lqmixgq"><div class="ldio-np83wdslazg"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>'
+        htmlData += '<p class="mt-2 pt-1">Running custom query</p></div>'
+        $("#queries-running").append(htmlData)
+        console.log(form_serialized)
+        $.ajax({
+             type: "POST",
+             url: '/run_query/' + tempId,
+             data: form_serialized, // serializes the form's elements.
+             success: function(data)
+             {
+                 addLayer(data['geojson'])
+                 $("#" + data['token']).html('')
+             }
+        });
+        toggleQueryModal()
+    });
+});
+
+function toggleQueryModal() {
+    $(function() {
+        $("#run-query").modal('toggle')
+    })
+}
