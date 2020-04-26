@@ -121,7 +121,7 @@ $(function() {
             data: form.serialize(), // serializes the form's elements.
             success: function(data)
             {
-                alert('success')
+                console.log('success')
                 if (window.location.pathname.endsWith('query')) { // Only when we are in the edit page
                     window.location.href = "/query/" + data['query_id'];
                 }
@@ -149,3 +149,23 @@ $(function() {
         })
     });
 });
+
+$(function() {
+    $('input[name="fav-checkbox"]').on("click", function(e) {
+        input = $(this)
+        checked = input.is(':checked')
+        id = input.attr('id')
+        queryId = id.split("-")[1]
+        formSerialized = "query_id=" + queryId + "&checkbox=" + checked
+        console.log(formSerialized)
+        $.ajax({
+            type: "POST",
+            url: '/favorite',
+            data: formSerialized, // serializes the form's elements.
+            success: function(data)
+            {
+                console.log('success')
+            }
+        });
+    })
+})

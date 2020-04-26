@@ -1,4 +1,4 @@
-from flask import render_template, url_for, request, jsonify, redirect, flash, render_template_string
+from flask import render_template, url_for, request, jsonify, redirect, flash, abort
 from geoportal import app, db, bcrypt
 import sqlite3
 import geojson
@@ -7,21 +7,26 @@ import pandas as pd
 import re
 from flask_login import login_user, current_user, logout_user, login_required
 from .forms import RegistrationForm, LoginForm, NewQuery
-from .models import User, Query, QueryTextParameters, Layer, Point, load_user
+from .models import User, Query, QueryTextParameters, Layer, Point, UserMarkedQuery
 import datetime
 
 
-@app.route('/')
-@app.route('/home')
-def home():
+def get_allowd_queries():
     if current_user.is_authenticated:
-        queries = Query.query.order_by(Query.only_user.desc()).all()
+        queries = Query.query.order_by(Query.only_user.desc(), Query.public).all()
         authorized_queries = []
         for query in queries:
             if query.public or (query.only_team and User.query.get(query.user_id).team_id == current_user.team_id) or query.user_id == current_user.id:
                 authorized_queries.append(query)
         queries = authorized_queries
+    else:
+        queries = Query.query.filter_by(public=True).all()
 
+    return queries
+
+
+def get_allowed_layers():
+    if current_user.is_authenticated:
         layers = Layer.query.all()
         authorized_layers = []
         for layer in layers:
@@ -29,8 +34,16 @@ def home():
                 authorized_layers.append(layer)
         layers = authorized_layers
     else:
-        queries = Query.query.filter_by(public=True).all()
         layers = []
+
+    return layers
+
+
+@app.route('/')
+@app.route('/home')
+def home():
+    queries = get_allowd_queries()
+    layers = get_allowed_layers()
     return render_template('home.html', queries=queries, layers=layers)
 
 
@@ -128,17 +141,44 @@ def update_point():
 @app.route('/layer', methods=['GET', 'POST'])
 def create_layer():
     name = request.form['name']
-    layer = Layer(name=name, user_id=current_user.id)
+    share_team = request.form['team']
+    share_team = share_team == 'true'
+    only_user = not share_team
+    layer = Layer(name=name, user_id=current_user.id, only_user=only_user, only_team=share_team)
     db.session.add(layer)
     db.session.commit()
     return jsonify({'status': 'success'})
 
 
+@app.route('/favorite', methods=['GET', 'POST'])
+def toggle_favorite_query():
+    query_id = request.form['query_id']
+    user_id = current_user.id
+    checkbox = request.form['checkbox'] == 'true'
+    existing_instance = UserMarkedQuery.query.filter_by(query_id=query_id, user_id=user_id).first()
+    if existing_instance:
+        if checkbox:
+            abort(400, 'Requesting to mark as favorite but query already marked.')
+        else:
+            db.session.delete(existing_instance)
+            db.session.commit()
+            return jsonify({'status': 'success'})
+    elif checkbox:
+        marked_query = UserMarkedQuery(query_id=query_id, user_id=user_id)
+        db.session.add(marked_query)
+        db.session.commit()
+        return jsonify({'status': 'success'})
+    else:
+        abort(400, 'Requesting to unmark as favorite but query already unmarked.')
+
+
 @app.route('/queries')
 @login_required
 def queries():
-    all_queries = Query.query.all()
-    return render_template('queries.html', queries=all_queries)
+    queries = get_allowd_queries()
+    marked_queries = db.session.query(UserMarkedQuery.query_id).filter_by(user_id=current_user.id).all()
+    marked_queries = [query[0] for query in marked_queries]
+    return render_template('queries.html', queries=queries, marked_queries=marked_queries)
 
 
 @app.route('/query/<int:query_id>', methods=['GET', 'POST'])

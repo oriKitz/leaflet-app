@@ -28,10 +28,22 @@ map.on('draw:created', function (e) {
     toggleMarkerModal()
 });
 
+map.on("popupopen", function(e) {
+    var lat = e.popup._latlng.lat.toFixed(6)
+    var lon = e.popup._latlng.lng.toFixed(6)
+    $(function() {
+        $("#current-point").val(lon + ", " + lat)
+    })
+})
 
-// This 2 lines disable somehow my queries shit:
-//var toolbar = L.Toolbar();
-//toolbar.addToolbar(map);
+map.on("click", function(e) {
+    console.log(e)
+    var lat = e.latlng.lat.toFixed(6)
+    var lon = e.latlng.lng.toFixed(6)
+    $(function() {
+        $("#current-point").val(lon + ", " + lat)
+    })
+})
 
 function popUp(f, l){
     var out = [];
@@ -148,7 +160,8 @@ $(function() {
         e.preventDefault();
         var form = $(this);
         name = $("#name").val()
-        form_serialized = "name=" + name
+        share_team = $("#share-team").is(":checked")
+        form_serialized = "name=" + name + "&team=" + share_team
         $.ajax({
              type: "POST",
              url: '/layer',

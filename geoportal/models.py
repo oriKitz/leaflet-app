@@ -25,6 +25,10 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"'{self.username}', '{self.email}'"
 
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
+
 
 class Role(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -116,3 +120,9 @@ class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
     users = db.relationship('User', backref='team', lazy=True)
+
+
+class UserMarkedQuery(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    query_id = db.Column(db.Integer, db.ForeignKey('query.id'))
