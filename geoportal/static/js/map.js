@@ -1,4 +1,11 @@
-var map = L.map('myMap').setView([32.1525104, 34.8601608], 13);
+var map = L.map('myMap', {
+    contextmenu: true,
+    contextmenuWidth: 140,
+    contextmenuItems: [{
+        text: 'Center map here',
+        callback: centerMap
+    }]
+}).setView([32.1525104, 34.8601608], 13);
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const tiles = L.tileLayer(tileUrl, { attribution });
@@ -6,6 +13,7 @@ tiles.addTo(map);
 
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
+
 var drawControl = new L.Control.Draw({
     draw: {
         circle: false
@@ -14,10 +22,16 @@ var drawControl = new L.Control.Draw({
         featureGroup: drawnItems
     }
 });
+
 map.addControl(drawControl);
+
 var latestLon, latestLat;
 var userLayers = {}
 var latestLayer;
+
+function centerMap (e) {
+    map.panTo(e.latlng);
+}
 
 map.on('draw:created', function (e) {
     console.log(e)
@@ -57,11 +71,51 @@ function popUp(f, l){
     }
 }
 
+function hideMarker (e) {
+    map.removeLayer(e.relatedTarget)
+}
+
+function removePointFromDB(layerId, lon, lat, e) {
+    $.ajax({
+         type: "POST",
+         url: '/remove-point/' + layerId + '/' + lon + '/' + lat,
+         success: function(data)
+         {
+             map.removeLayer(e.relatedTarget)
+         }
+    });
+}
+
+function removeMarker (e) {
+//    map.panTo(e.latlng);
+    var marker = e.relatedTarget
+    var layer = marker._eventParents
+    for (var k in layer) {
+        layer_val = layer[k]
+        for (var layerId in userLayers) {
+            if (userLayers[layerId] == layer_val) {
+                var lon = marker.feature.geometry.coordinates[0]
+                var lat = marker.feature.geometry.coordinates[1]
+                removePointFromDB(layerId, lon, lat, e)
+            }
+        }
+    }
+}
+
 function addLayer(data) {
     icon = getIcon()
     L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
         return L.marker(latlng, {
-            icon: icon
+            icon: icon,
+            contextmenu: true,
+            contextmenuItems: [{
+                text: 'Hide marker',
+                callback: hideMarker,
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }]
         })
      }}).addTo(map);
 }
@@ -69,7 +123,21 @@ function addLayer(data) {
 function addUserLayer(data, layerId) {
     feature = L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
         return L.marker(latlng, {
-            icon: blueIcon
+            icon: blueIcon,
+            contextmenu: true,
+            contextmenuItems: [{
+                text: 'Remove marker',
+                callback: removeMarker,
+                index: 0
+            },
+            {
+                text: 'Hide marker',
+                callback: hideMarker,
+                index: 1
+            }, {
+                separator: true,
+                index: 2
+            }]
         })
     }})
     feature.addTo(map);

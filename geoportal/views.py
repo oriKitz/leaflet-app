@@ -157,6 +157,23 @@ def create_layer():
     return jsonify({'status': 'success'})
 
 
+@app.route('/remove-point/<int:layer_id>/<float:lon>/<float:lat>', methods=['POST'])
+def remove_point(layer_id, lon, lat):
+    # point = Point.query.filter(Point.layer_id == layer_id, round(Point.lon, 6) == lon, round(Point.lat, 6) == lat).first()
+    layer_points = Point.query.filter_by(layer_id=layer_id)
+    mathing_point = None
+    for point in layer_points:
+        if round(point.lon, 6) == lon and round(point.lat, 6) == lat:
+            mathing_point = point
+            break
+    if mathing_point:
+        db.session.delete(mathing_point)
+        db.session.commit()
+        return jsonify({'status': 'success'})
+    else:
+        abort(400, "Point doesn't exist")
+
+
 @app.route('/favorite', methods=['GET', 'POST'])
 def toggle_favorite_query():
     query_id = request.form['query_id']
