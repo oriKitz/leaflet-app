@@ -7,15 +7,16 @@
 {% block content %}
 <div class="col-md-8 mt-3">
     <table class="table table-hover table-condensed dataTable no-footer">
-        <thead>
+        <thead style="text-align: center">
             <tr>
                 <th></th>
                 <th>Query Name</th>
                 <th>Author</th>
-                <th>Last update time</th>
+                <th style="text-align: left">Last update time</th>
+                <th>Permissions</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody style="text-align: center">
         {% for query in queries %}
             <tr>
                 <td>
@@ -32,9 +33,18 @@
                 {% if query.id in marked_queries %}
                     <script>toggleFavOn({{ query.id }})</script>
                 {% endif %}
-                <td> <a href="/query/{{ query.id }}">{{ query.query_name }}</a></td>
+                <td > <a href="/query/{{ query.id }}">{{ query.query_name }}</a></td>
                 <td>{{ query.user.full_name }}</td>
-                <td>{{ query.last_update_time }}</td>
+                <td style="text-align: left">{{ query.last_update_time }}</td>
+                <td>
+                    {% if query.only_user %}
+                    <span class="fa fa-user"></span>
+                    {% elif query.only_team %}
+                    <span class="fa fa-users"></span>
+                    {% else %}
+                    <span class="fa fa-globe"></span>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
         </tbody>

@@ -36,9 +36,10 @@
     <h5 class="disply-5">Your Private Layers:</h5>
     {% for layer in layers %}
         {% if layer.only_user %}
-        <div class="row ml-2 mt-3 custom-control custom-checkbox">
+        <div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between">
             <input type="checkbox" id="checkbox-{{ layer.id }}" class="custom-control-input" onclick="toggleLayer({{ layer.id }})">
             <label class="custom-control-label" for="checkbox-{{ layer.id }}">{{ layer.name }}</label>
+            <!--<button class="btn btn-outline-info ml-5" style="">Share Team</button>-->
         </div>
         {% endif %}
     {% endfor %}
@@ -97,7 +98,7 @@
 {% endblock content %}
 
 {% block right_sidebar %}
-<button type="button" class="btn btn-primary mb-3 mt-3" data-toggle="modal" data-target="#run-query">
+<button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#run-query">
   <span class="fa fa-plus mr-2"></span>Run a Query
 </button>
 <div class="modal fade" id="run-query" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -139,7 +140,7 @@
                 </div>
                 <div class="col-sm-1">
                     {% if query.only_user %}
-                    <span class="fa fa-user"></span>
+                        <span class="fa fa-user"></span>
                     {% elif query.only_team %}
                         <span class="fa fa-users"></span>
                     {% else %}
