@@ -112,7 +112,10 @@ $(function() {
                 success: function(data)
                 {
                     addLayer(data['geojson'])
-                    $("#" + data['token']).html('')
+                    var points = data['results_amount']
+                    var query_name = data['query_name']
+                    var infoHtml = '<p>Query: "' + query_name + '" returned ' + points + ' points.</p>'
+                    $("#" + data['token']).html(infoHtml)
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     var error_params = xhr.responseJSON

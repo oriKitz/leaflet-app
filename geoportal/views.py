@@ -59,7 +59,7 @@ def invoke_query(query_id, token):
     query_text = prepare_query(query_id, request.form)
     try:
         query_results = get_geojson_from_query(query_text)
-        return {'geojson': query_results, 'token': token}
+        return {'geojson': query_results, 'token': token, 'results_amount': len(query_results['features']), 'query_name': Query.query.get(query_id).query_name}
     except Exception as e:
         return jsonify(error_type=str(type(e)), error_message=str(e), query_name=Query.query.get(query_id).query_name, params=dict(request.form), token=token), 500
 
