@@ -29,6 +29,7 @@ var latestLon, latestLat;
 var userLayers = {}
 var queryLayers = {}
 var latestLayer;
+var chosenLayerToken;
 
 function centerMap (e) {
     map.panTo(e.latlng);
@@ -135,7 +136,8 @@ function addLayer(data, queryName) {
     feature.addTo(map);
     var token = makeId(10)
     queryLayers[token] = feature
-    var layerHtml = '<div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between">'
+    var layerHtml = '<div class="row mt-3 custom-control custom-checkbox justify-content-between">'
+    layerHtml += '<button type="button" name="add-custom-layer" data-token="' + token + '" class="btn btn-xs p-0 pb-3 mr-2 pr-3" data-toggle="modal" data-target="#add-layer-query"><span class="fa fa-plus mr-2"></span></button>'
     layerHtml += '<input type="checkbox" id="checkbox-' + token + '" class="custom-control-input" onclick="toggleQueryLayer(' + "'" + token + "'" +')">'
     layerHtml += '<label class="custom-control-label normal" style="font-size: 17px" for="checkbox-' + token + '">' + queryName + '</label></div>'
     $(function () {
@@ -144,6 +146,12 @@ function addLayer(data, queryName) {
         $("#checkbox-" + token)[0].checked = true
     })
 }
+
+$(function() {
+    $("#queried-layers-header").on('click', 'button[name="add-custom-layer"]', function(e) {
+        chosenLayerToken = e.target.parentElement.dataset.token
+    })
+})
 
 function addUserLayer(data, layerId) {
     feature = L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
@@ -234,6 +242,12 @@ function toggleLayerModal() {
     })
 }
 
+function toggleQueryLayerModal() {
+    $(function() {
+        $("#add-layer-query").modal('toggle')
+    })
+}
+
 $(function() {
     $('#add-point').on('shown.bs.modal', function () {
         $('#description').focus()
@@ -273,6 +287,46 @@ $(function() {
              type: "POST",
              url: '/layer',
              data: form_serialized, // serializes the form's elements.
+             success: function(data)
+             {
+                 console.log(data)
+             }
+        });
+        location.reload()
+    });
+});
+
+function getPointsFromLayer(layer) {
+    var points = []
+    for (key in layer._layers) {
+        point = layer._layers[key]
+        var lon = point._latlng.lng
+        var lat = point._latlng.lat
+        var description = point._popup._content
+        points.push([lon, lat, description])
+    }
+    return points
+}
+
+$(function() {
+    $('form[id="modal-layer-form-query"]').submit(function(e) {
+        e.preventDefault();
+        layerToken = chosenLayerToken
+        chosenLayerToken = ''
+        var form = $(this);
+        name = $("#layer-name").val()
+        share_team = $("#layer-share-team").is(":checked")
+        form_serialized = "name=" + name + "&team=" + share_team
+        layer = queryLayers[layerToken]
+        data = {name: name,
+                team: share_team,
+                layer: getPointsFromLayer(layer)}
+        $.ajax({
+             type: "POST",
+             url: '/layer-query',
+             dataType: 'json',
+             contentType: 'application/json',
+             data: JSON.stringify(data),
              success: function(data)
              {
                  console.log(data)

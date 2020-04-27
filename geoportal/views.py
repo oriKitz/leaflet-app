@@ -171,6 +171,23 @@ def create_layer():
     return jsonify({'status': 'success'})
 
 
+@app.route('/layer-query', methods=['POST'])
+def craete_layer_with_points():
+    json = request.get_json()
+    layer_name = json['name']
+    share_team = json['team']
+    points = json['layer']
+    only_user = not share_team
+    # layer = Layer(name=layer_name, user_id=current_user.id, only_user=only_user, only_team=share_team)
+    # db.session.add(layer)
+    # db.session.commit()
+    # for point in points:
+    #     p = Point(layer_id=layer.id, lon=point[0], lat=point[1], description=point[2])
+    #     db.session.add(p)
+    # db.session.commit()
+    return jsonify({'status': 'success'})
+
+
 @app.route('/remove-point/<int:layer_id>/<float:lon>/<float:lat>', methods=['POST'])
 def remove_point(layer_id, lon, lat):
     # point = Point.query.filter(Point.layer_id == layer_id, round(Point.lon, 6) == lon, round(Point.lat, 6) == lat).first()

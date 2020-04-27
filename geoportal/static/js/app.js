@@ -114,7 +114,7 @@ $(function() {
                     addLayer(data['geojson'], data['query_name'])
                     var points = data['results_amount']
                     var query_name = data['query_name']
-                    var infoHtml = '<span class="close mt-2 pt-1 mr-2">x</span><p>Query: "' + query_name + '" returned ' + points + ' points.</p>'
+                    var infoHtml = '<span class="close close2 mt-2 pt-1 mr-2">x</span><p>Query: "' + query_name + '" returned ' + points + ' points.</p>'
                     $("#" + data['token']).html(infoHtml)
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -124,7 +124,7 @@ $(function() {
                     var query_name = error_params['query_name']
                     var params = error_params['params']
                     var token = error_params['token']
-                    var errorHtml = '<span class="close mt-2 pt-1 mr-2">x</span><p><b>Query: "' + query_name + '" Failed with error:</b> ' + escapeHtml(error_type) + ': ' + error_message + '</p>'
+                    var errorHtml = '<span class="close close2 mt-2 pt-1 mr-2">x</span><p><b>Query: "' + query_name + '" Failed with error:</b> ' + escapeHtml(error_type) + ': ' + error_message + '</p>'
                     $("#" + token).html(errorHtml)
                 }
             });
@@ -153,7 +153,7 @@ $(function() {
             {
                 addLayer(data['geojson'], 'Custom Query')
                 var points = data['results_amount']
-                var infoHtml = '<span class="close mt-2 pt-1 mr-2">x</span><p>Custom query returned ' + points + ' points.</p>'
+                var infoHtml = '<span class="close close2 mt-2 pt-1 mr-2">x</span><p>Custom query returned ' + points + ' points.</p>'
                 $("#" + data['token']).html(infoHtml)
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -161,7 +161,7 @@ $(function() {
                 var error_message = error_params['error_message']
                 var error_type = error_params['error_type']
                 var token = error_params['token']
-                var errorHtml = '<span class="close mt-2 pt-1 mr-2">x</span><p><b>Custom query failed with error:</b> ' + escapeHtml(error_type) + ': ' + error_message + '</p>'
+                var errorHtml = '<span class="close close2 mt-2 pt-1 mr-2">x</span><p><b>Custom query failed with error:</b> ' + escapeHtml(error_type) + ': ' + error_message + '</p>'
                 $("#" + token).html(errorHtml)
             }
         });
@@ -170,7 +170,7 @@ $(function() {
 });
 
 $(function() {
-    $('#queries-running').on("click", '.close', function(e) {
+    $('#queries-running').on("click", '.close2', function(e) {
         row = $(this).parent()
         row.css('display', 'none')
     })
