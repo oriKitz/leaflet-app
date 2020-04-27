@@ -178,13 +178,13 @@ def craete_layer_with_points():
     share_team = json['team']
     points = json['layer']
     only_user = not share_team
-    # layer = Layer(name=layer_name, user_id=current_user.id, only_user=only_user, only_team=share_team)
-    # db.session.add(layer)
-    # db.session.commit()
-    # for point in points:
-    #     p = Point(layer_id=layer.id, lon=point[0], lat=point[1], description=point[2])
-    #     db.session.add(p)
-    # db.session.commit()
+    layer = Layer(name=layer_name, user_id=current_user.id, only_user=only_user, only_team=share_team)
+    db.session.add(layer)
+    db.session.commit()
+    for point in points:
+        p = Point(layer_id=layer.id, lon=point[0], lat=point[1], description=point[2])
+        db.session.add(p)
+    db.session.commit()
     return jsonify({'status': 'success'})
 
 
