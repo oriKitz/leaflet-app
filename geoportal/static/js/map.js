@@ -102,6 +102,15 @@ function removeMarker (e) {
     }
 }
 
+function addMarkerToLayer(e) {
+    var marker = e.relatedTarget
+    var lon = marker.feature.geometry.coordinates[0]
+    var lat = marker.feature.geometry.coordinates[1]
+    latestLon = lon
+    latestLat = lat
+    toggleMarkerModal()
+}
+
 function addLayer(data) {
     icon = getIcon()
     L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
@@ -113,8 +122,12 @@ function addLayer(data) {
                 callback: hideMarker,
                 index: 0
             }, {
-                separator: true,
+                text: 'Add to a Layer',
+                callback: addMarkerToLayer,
                 index: 1
+            }, {
+                separator: true,
+                index: 2
             }]
         })
      }}).addTo(map);
@@ -218,7 +231,7 @@ $(function() {
              success: function(data)
              {
                  console.log(data)
-                userLayers[data['layer_id']].addLayer(latestLayer)
+                 userLayers[data['layer_id']].addLayer(latestLayer)
              }
         });
         toggleMarkerModal()
