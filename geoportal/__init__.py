@@ -19,7 +19,7 @@ bcrypt = Bcrypt(app)
 migrate = Migrate(app, db)
 admin = Admin(app, name='geoportal', template_mode='bootstrap3')
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 
 from .models import User, Role, Query, QueryTextParameters, Point, Layer, Team
@@ -45,4 +45,12 @@ admin.add_view(ModelView(Layer, db.session))
 #         get_url=url_for
 #     )
 
-from geoportal import views
+from geoportal.main.views import main
+from geoportal.mapping.views import mapping
+from geoportal.queries.views import queries
+from geoportal.users.views import users
+
+app.register_blueprint(main)
+app.register_blueprint(mapping)
+app.register_blueprint(queries)
+app.register_blueprint(users)
