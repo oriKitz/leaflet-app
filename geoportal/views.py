@@ -57,7 +57,11 @@ def home():
 @app.route('/invoke/<int:query_id>/<string:token>', methods=['GET', 'POST'])
 def invoke_query(query_id, token):
     query_text = prepare_query(query_id, request.form)
-    return {'geojson': get_geojson_from_query(query_text), 'token': token}
+    try:
+        query_results = get_geojson_from_query(query_text)
+        return {'geojson': query_results, 'token': token}
+    except Exception as e:
+        return jsonify(error_type=str(type(e)), error_message=str(e), query_name=Query.query.get(query_id).query_name, params=dict(request.form), token=token), 500
 
 
 @app.route('/table_results/<int:query_id>', methods=['GET', 'POST'])

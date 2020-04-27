@@ -106,18 +106,37 @@ $(function() {
             htmlData += '<p class="mt-2 pt-1">Running query ID: ' + form.attr('name') + '</p></div>'
             $("#queries-running").append(htmlData)
             $.ajax({
-                 type: "POST",
-                 url: '/invoke/' + queryId + '/' + tempId,
-                 data: form.serialize(), // serializes the form's elements.
-                 success: function(data)
-                 {
-                     addLayer(data['geojson'])
-                     $("#" + data['token']).html('')
-                 }
+                type: "POST",
+                url: '/invoke/' + queryId + '/' + tempId,
+                data: form.serialize(), // serializes the form's elements.
+                success: function(data)
+                {
+                    addLayer(data['geojson'])
+                    $("#" + data['token']).html('')
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    var error_params = xhr.responseJSON
+                    var error_message = error_params['error_message']
+                    var error_type = error_params['error_type']
+                    var query_name = error_params['query_name']
+                    var params = error_params['params']
+                    var token = error_params['token']
+                    var errorHtml = '<p><b>Query: "' + query_name + '" Failed with error:</b> ' + escapeHtml(error_type) + ': ' + error_message + '</p>'
+                    $("#" + token).html(errorHtml)
+                }
             });
         }
     });
 });
+
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
 
 $(function() {
     $('#query-form').submit(function(e) {
