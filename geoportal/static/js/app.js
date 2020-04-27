@@ -22,25 +22,6 @@ function paging() {
     });
 }
 
-function openForm(form) {
-    $(function() {
-        form.style.display = "block";
-    })
-}
-
-function closeForm(queryId) {
-    $(document).ready(function() {
-        form = $('form[name="' + queryId + '"]')
-        form.html('')
-        form.removeClass("mt-2")
-    });
-}
-function closeFormQuery() {
-    $(document).ready(function() {
-        $("#params-form").html('')
-    });
-}
-
 function getParametersFormHTML(data, queryId) {
     formHTML = ''
     for (i = 0; i < data.length; i++) {
@@ -176,14 +157,7 @@ $(function() {
     })
 });
 
-function escapeHtml(unsafe) {
-    return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
-}
+
 
 $(function() {
     $('#query-form').submit(function(e) {
@@ -244,27 +218,3 @@ $(function() {
         });
     })
 })
-
-function toggleFavOn(queryId) {
-    $(function() {
-        input = $("#mark-" + queryId)
-        input[0].checked = true
-    })
-}
-
-function makeId(length) {
-   var result           = '';
-   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   var charactersLength = characters.length;
-   for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-   }
-   return result;
-}
-
-
-function toggleQueryModal() {
-    $(function() {
-        $("#run-query").modal('toggle')
-    })
-}

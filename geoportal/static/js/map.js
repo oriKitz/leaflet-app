@@ -62,6 +62,18 @@ map.on("click", function(e) {
     })
 })
 
+$(function() {
+    $("#queried-layers-header").on('click', 'button[name="add-custom-layer"]', function(e) {
+        chosenLayerToken = e.target.parentElement.dataset.token
+    })
+})
+
+$(function() {
+    $('#add-point').on('shown.bs.modal', function () {
+        $('#description').focus()
+    })
+})
+
 function popUp(f, l){
     var out = [];
     if (f.properties) {
@@ -71,46 +83,6 @@ function popUp(f, l){
         }
         l.bindPopup(out.join("<br />"));
     }
-}
-
-function hideMarker (e) {
-    map.removeLayer(e.relatedTarget)
-}
-
-function removePointFromDB(layerId, lon, lat, e) {
-    $.ajax({
-         type: "POST",
-         url: '/remove-point/' + layerId + '/' + lon + '/' + lat,
-         success: function(data)
-         {
-             map.removeLayer(e.relatedTarget)
-         }
-    });
-}
-
-function removeMarker (e) {
-//    map.panTo(e.latlng);
-    var marker = e.relatedTarget
-    var layer = marker._eventParents
-    for (var k in layer) {
-        layer_val = layer[k]
-        for (var layerId in userLayers) {
-            if (userLayers[layerId] == layer_val) {
-                var lon = marker.feature.geometry.coordinates[0]
-                var lat = marker.feature.geometry.coordinates[1]
-                removePointFromDB(layerId, lon, lat, e)
-            }
-        }
-    }
-}
-
-function addMarkerToLayer(e) {
-    var marker = e.relatedTarget
-    var lon = marker.feature.geometry.coordinates[0]
-    var lat = marker.feature.geometry.coordinates[1]
-    latestLon = lon
-    latestLat = lat
-    toggleMarkerModal()
 }
 
 function addLayer(data, queryName) {
@@ -147,11 +119,6 @@ function addLayer(data, queryName) {
     })
 }
 
-$(function() {
-    $("#queried-layers-header").on('click', 'button[name="add-custom-layer"]', function(e) {
-        chosenLayerToken = e.target.parentElement.dataset.token
-    })
-})
 
 function addUserLayer(data, layerId) {
     feature = L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
@@ -176,162 +143,3 @@ function addUserLayer(data, layerId) {
     feature.addTo(map);
     userLayers[layerId] = feature
 }
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getIcon() {
-    if (Array.isArray(unused_icons) && unused_icons.length) {
-        icon = unused_icons.shift()
-        used_icons.push(icon)
-        return icon
-    } else {
-        return icons[getRandomInt(0, 7)]
-    }
-}
-
-function toggleLayer(layerId) {
-    $(function() {
-        var checkbox = $("#checkbox-" + layerId)
-        if (checkbox.is(":checked")) {
-            getShowLayer(layerId)
-        }
-        else {
-            userLayers[layerId].removeFrom(map)
-        }
-    })
-};
-
-function getShowLayer(layerId) {
-    $(function() {
-        $.ajax({
-             type: "GET",
-             url: '/points/' + layerId,
-             success: function(data)
-             {
-                 addUserLayer(data, layerId)
-             }
-        });
-    })
-}
-
-function toggleQueryLayer(token) {
-    $(function() {
-        var checkbox = $("#checkbox-" + token)
-        if (checkbox.is(":checked")) {
-            queryLayers[token].addTo(map)
-        }
-        else {
-            queryLayers[token].removeFrom(map)
-        }
-    })
-};
-
-function toggleMarkerModal() {
-    $(function() {
-        $("#add-point").modal('toggle')
-    })
-}
-
-function toggleLayerModal() {
-    $(function() {
-        $("#add-layer").modal('toggle')
-    })
-}
-
-function toggleQueryLayerModal() {
-    $(function() {
-        $("#add-layer-query").modal('toggle')
-    })
-}
-
-$(function() {
-    $('#add-point').on('shown.bs.modal', function () {
-        $('#description').focus()
-    })
-})
-
-$(function() {
-    $('form[id="modal-form"]').submit(function(e) {
-        e.preventDefault();
-        var form = $(this);
-        var url = form.attr('action');
-        given_description = $("#description").val()
-        chosen_layer = $("#layer").val()
-        form_serialized = "description=" + given_description + "&layer=" + chosen_layer + "&lon=" + latestLon + "&lat=" + latestLat
-        $.ajax({
-             type: "POST",
-             url: '/point',
-             data: form_serialized, // serializes the form's elements.
-             success: function(data)
-             {
-                 console.log(data)
-                 userLayers[data['layer_id']].addLayer(latestLayer)
-             }
-        });
-        toggleMarkerModal()
-    });
-});
-
-$(function() {
-    $('form[id="modal-layer-form"]').submit(function(e) {
-        e.preventDefault();
-        var form = $(this);
-        name = $("#name").val()
-        share_team = $("#share-team").is(":checked")
-        form_serialized = "name=" + name + "&team=" + share_team
-        $.ajax({
-             type: "POST",
-             url: '/layer',
-             data: form_serialized, // serializes the form's elements.
-             success: function(data)
-             {
-                 console.log(data)
-             }
-        });
-        location.reload()
-    });
-});
-
-function getPointsFromLayer(layer) {
-    var points = []
-    for (key in layer._layers) {
-        point = layer._layers[key]
-        var lon = point._latlng.lng
-        var lat = point._latlng.lat
-        var description = point._popup._content
-        points.push([lon, lat, description])
-    }
-    return points
-}
-
-$(function() {
-    $('form[id="modal-layer-form-query"]').submit(function(e) {
-        e.preventDefault();
-        layerToken = chosenLayerToken
-        chosenLayerToken = ''
-        var form = $(this);
-        name = $("#layer-name").val()
-        share_team = $("#layer-share-team").is(":checked")
-        form_serialized = "name=" + name + "&team=" + share_team
-        layer = queryLayers[layerToken]
-        data = {name: name,
-                team: share_team,
-                layer: getPointsFromLayer(layer)}
-        $.ajax({
-             type: "POST",
-             url: '/layer-query',
-             dataType: 'json',
-             contentType: 'application/json',
-             data: JSON.stringify(data),
-             success: function(data)
-             {
-                 console.log(data)
-             }
-        });
-        location.reload()
-    });
-});

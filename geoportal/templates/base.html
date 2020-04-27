@@ -13,19 +13,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
     <link rel="stylesheet" href="/static/css/leaflet.contextmenu.css">
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script type='text/javascript' src="/static/js/bootstrap.js"></script>
-    <script type='text/javascript' src="/static/js/bootstrap.bundle.js"></script>
+    <script type='text/javascript' src="/static/js/outsource/bootstrap.js"></script>
+    <script type='text/javascript' src="/static/js/outsource/bootstrap.bundle.js"></script>
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
         integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
         crossorigin=""></script>
-    <script src="/static/js/leaflet.ajax.js"></script>
+    <script src="/static/js/outsource/leaflet.ajax.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
-    <script src="/static/js/src-min/ace.js"></script>
+    <script src="/static/js/outsource/ace-min/ace.js"></script>
     <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-    <script src="/static/js/icons.js"></script>
+    <script src="/static/js/outsource/icons.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="/static/js/leaflet.contextmenu.js"></script>
-    <script type="text/javascript" src="/static/js/app.js"></script>
+    <script src="/static/js/outsource/leaflet.contextmenu.js"></script>
 
     {% if title %}
         <title>{{ title }}</title>
@@ -81,6 +80,11 @@
     </div>
 </body>
 {% block fileend %}{% endblock %}
+<script type="text/javascript" src="/static/js/app.js"></script>
+<script type="text/javascript" src="/static/js/util.js"></script>
+<script type="text/javascript" src="/static/js/map_utils.js"></script>
+<script type="text/javascript" src="/static/js/modals.js"></script>
+<script type="text/javascript" src="/static/js/toggles.js"></script>
 <script>
     {% block javascript %}{% endblock %}
 </script>
