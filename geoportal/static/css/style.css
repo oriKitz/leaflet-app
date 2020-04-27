@@ -21,6 +21,10 @@
   font-weight: bold;
 }
 
+.normal {
+  font-weight: normal;
+}
+
 .close {
   cursor: pointer;
   transform: translate(0%, -50%);

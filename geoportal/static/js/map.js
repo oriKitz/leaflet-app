@@ -27,6 +27,7 @@ map.addControl(drawControl);
 
 var latestLon, latestLat;
 var userLayers = {}
+var queryLayers = {}
 var latestLayer;
 
 function centerMap (e) {
@@ -111,9 +112,9 @@ function addMarkerToLayer(e) {
     toggleMarkerModal()
 }
 
-function addLayer(data) {
+function addLayer(data, queryName) {
     icon = getIcon()
-    L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
+    feature = L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
         return L.marker(latlng, {
             icon: icon,
             contextmenu: true,
@@ -130,7 +131,18 @@ function addLayer(data) {
                 index: 2
             }]
         })
-     }}).addTo(map);
+    }})
+    feature.addTo(map);
+    var token = makeId(10)
+    queryLayers[token] = feature
+    var layerHtml = '<div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between">'
+    layerHtml += '<input type="checkbox" id="checkbox-' + token + '" class="custom-control-input" onclick="toggleQueryLayer(' + "'" + token + "'" +')">'
+    layerHtml += '<label class="custom-control-label normal" style="font-size: 17px" for="checkbox-' + token + '">' + queryName + '</label></div>'
+    $(function () {
+        $("#queried-layers-header").css('display', '')
+        $("#queried-layers-header").append(layerHtml)
+        $("#checkbox-" + token)[0].checked = true
+    })
 }
 
 function addUserLayer(data, layerId) {
@@ -197,6 +209,18 @@ function getShowLayer(layerId) {
         });
     })
 }
+
+function toggleQueryLayer(token) {
+    $(function() {
+        var checkbox = $("#checkbox-" + token)
+        if (checkbox.is(":checked")) {
+            queryLayers[token].addTo(map)
+        }
+        else {
+            queryLayers[token].removeFrom(map)
+        }
+    })
+};
 
 function toggleMarkerModal() {
     $(function() {

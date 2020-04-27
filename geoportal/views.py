@@ -212,7 +212,10 @@ def queries():
 @app.route('/run_query/<string:token>', methods=['POST'])
 def run_query(token):
     query = request.form['query']
-    return {'geojson': get_geojson_from_query(query), 'token': token}
+    try:
+        return {'geojson': get_geojson_from_query(query), 'token': token}
+    except Exception as e:
+        return jsonify(error_type=str(type(e)), error_message=str(e), token=token), 500
 
 
 @app.route('/query/<int:query_id>', methods=['GET', 'POST'])

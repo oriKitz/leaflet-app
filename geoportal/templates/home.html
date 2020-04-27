@@ -32,8 +32,9 @@
         </div>
     </div>
 </div>
+<h5 id="queried-layers-header" class="disply-5" style="display: none">Queried Layers:</h5>
 {% if current_user.is_authenticated %}
-    <h5 class="disply-5">Your Private Layers:</h5>
+    <h5 class="disply-5 mt-3">Your Private Layers:</h5>
     {% for layer in layers %}
         {% if layer.only_user %}
         <div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between">
@@ -43,7 +44,7 @@
         </div>
         {% endif %}
     {% endfor %}
-    <h5 class="disply-5 mt-5">Team Layers:</h5>
+    <h5 class="disply-5 mt-3">Team Layers:</h5>
     {% for layer in layers %}
         {% if layer.only_team %}
         <div class="row ml-2 mt-3 custom-control custom-checkbox">

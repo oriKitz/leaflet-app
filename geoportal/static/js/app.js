@@ -111,7 +111,7 @@ $(function() {
                 data: form.serialize(), // serializes the form's elements.
                 success: function(data)
                 {
-                    addLayer(data['geojson'])
+                    addLayer(data['geojson'], data['query_name'])
                     var points = data['results_amount']
                     var query_name = data['query_name']
                     var infoHtml = '<span class="close mt-2 pt-1 mr-2">x</span><p>Query: "' + query_name + '" returned ' + points + ' points.</p>'
@@ -129,6 +129,43 @@ $(function() {
                 }
             });
         }
+    });
+});
+
+$(function() {
+    $('form[id="modal-query-form"]').submit(function(e) {
+        e.preventDefault();
+        query = $("#query-big")[0].innerText
+        selectIndex = query.toLowerCase().indexOf('select')
+        query = query.substring(selectIndex)
+        var form_serialized = "query=" + query
+        var tempId = makeId(10)
+        var htmlData = '<div class="row" id="' + tempId + '">'
+        htmlData += '<div class="loadingio-spinner-spinner-kly0lqmixgq"><div class="ldio-np83wdslazg"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>'
+        htmlData += '<p class="mt-2 pt-1">Running custom query</p></div>'
+        $("#queries-running").append(htmlData)
+        console.log(form_serialized)
+        $.ajax({
+            type: "POST",
+            url: '/run_query/' + tempId,
+            data: form_serialized, // serializes the form's elements.
+            success: function(data)
+            {
+                addLayer(data['geojson'], 'Custom Query')
+                var points = data['results_amount']
+                var infoHtml = '<span class="close mt-2 pt-1 mr-2">x</span><p>Custom query returned ' + points + ' points.</p>'
+                $("#" + data['token']).html(infoHtml)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                var error_params = xhr.responseJSON
+                var error_message = error_params['error_message']
+                var error_type = error_params['error_type']
+                var token = error_params['token']
+                var errorHtml = '<span class="close mt-2 pt-1 mr-2">x</span><p><b>Custom query failed with error:</b> ' + escapeHtml(error_type) + ': ' + error_message + '</p>'
+                $("#" + token).html(errorHtml)
+            }
+        });
+        toggleQueryModal()
     });
 });
 
@@ -225,32 +262,6 @@ function makeId(length) {
    return result;
 }
 
-$(function() {
-    $('form[id="modal-query-form"]').submit(function(e) {
-        e.preventDefault();
-        query = $("#query-big")[0].innerText
-        selectIndex = query.toLowerCase().indexOf('select')
-        query = query.substring(selectIndex)
-        var form_serialized = "query=" + query
-        var tempId = makeId(10)
-        var htmlData = '<div class="row" id="' + tempId + '">'
-        htmlData += '<div class="loadingio-spinner-spinner-kly0lqmixgq"><div class="ldio-np83wdslazg"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>'
-        htmlData += '<p class="mt-2 pt-1">Running custom query</p></div>'
-        $("#queries-running").append(htmlData)
-        console.log(form_serialized)
-        $.ajax({
-             type: "POST",
-             url: '/run_query/' + tempId,
-             data: form_serialized, // serializes the form's elements.
-             success: function(data)
-             {
-                 addLayer(data['geojson'])
-                 $("#" + data['token']).html('')
-             }
-        });
-        toggleQueryModal()
-    });
-});
 
 function toggleQueryModal() {
     $(function() {
