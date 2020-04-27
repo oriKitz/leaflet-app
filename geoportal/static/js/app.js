@@ -114,7 +114,7 @@ $(function() {
                     addLayer(data['geojson'])
                     var points = data['results_amount']
                     var query_name = data['query_name']
-                    var infoHtml = '<p>Query: "' + query_name + '" returned ' + points + ' points.</p>'
+                    var infoHtml = '<span class="close mt-2 pt-1 mr-2">x</span><p>Query: "' + query_name + '" returned ' + points + ' points.</p>'
                     $("#" + data['token']).html(infoHtml)
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -124,12 +124,19 @@ $(function() {
                     var query_name = error_params['query_name']
                     var params = error_params['params']
                     var token = error_params['token']
-                    var errorHtml = '<p><b>Query: "' + query_name + '" Failed with error:</b> ' + escapeHtml(error_type) + ': ' + error_message + '</p>'
+                    var errorHtml = '<span class="close mt-2 pt-1 mr-2">x</span><p><b>Query: "' + query_name + '" Failed with error:</b> ' + escapeHtml(error_type) + ': ' + error_message + '</p>'
                     $("#" + token).html(errorHtml)
                 }
             });
         }
     });
+});
+
+$(function() {
+    $('#queries-running').on("click", '.close', function(e) {
+        row = $(this).parent()
+        row.css('display', 'none')
+    })
 });
 
 function escapeHtml(unsafe) {

@@ -21,6 +21,11 @@
   font-weight: bold;
 }
 
+.close {
+  cursor: pointer;
+  transform: translate(0%, -50%);
+}
+
 @keyframes ldio-np83wdslazg {
   0% { opacity: 1 }
   100% { opacity: 0 }
