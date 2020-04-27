@@ -64,6 +64,16 @@ def invoke_query(query_id, token):
         return jsonify(error_type=str(type(e)), error_message=str(e), query_name=Query.query.get(query_id).query_name, params=dict(request.form), token=token), 500
 
 
+@app.route('/run_query/<string:token>', methods=['POST'])
+def run_query(token):
+    query = request.form['query']
+    try:
+        query_results = get_geojson_from_query(query)
+        return {'geojson': query_results, 'token': token, 'results_amount': len(query_results['features'])}
+    except Exception as e:
+        return jsonify(error_type=str(type(e)), error_message=str(e), token=token), 500
+
+
 @app.route('/table_results/<int:query_id>', methods=['GET', 'POST'])
 def query_table_results(query_id):
     query_text = prepare_query(query_id, request.form)
@@ -207,15 +217,6 @@ def queries():
     marked_queries = db.session.query(UserMarkedQuery.query_id).filter_by(user_id=current_user.id).all()
     marked_queries = [query[0] for query in marked_queries]
     return render_template('queries.html', queries=queries, marked_queries=marked_queries)
-
-
-@app.route('/run_query/<string:token>', methods=['POST'])
-def run_query(token):
-    query = request.form['query']
-    try:
-        return {'geojson': get_geojson_from_query(query), 'token': token}
-    except Exception as e:
-        return jsonify(error_type=str(type(e)), error_message=str(e), token=token), 500
 
 
 @app.route('/query/<int:query_id>', methods=['GET', 'POST'])
