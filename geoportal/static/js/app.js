@@ -164,10 +164,17 @@ $(function() {
         e.preventDefault();
         console.log('here')
         var form = $(this);
+        query = $("#query")[0].innerText
+        selectIndex = query.toLowerCase().indexOf('select')
+        query = query.substring(selectIndex)
+        var serialized = form.serialize()
+        if (serialized.indexOf('query=&') != -1) {
+            serialized = serialized.slice(0, serialized.indexOf('query=&')) + '&query=' + query + serialized.substring(serialized.indexOf('query=&') + 6)
+        }
         $.ajax({
             type: "POST",
             url: window.location.pathname,
-            data: form.serialize(), // serializes the form's elements.
+            data: serialized, // serializes the form's elements.
             success: function(data)
             {
                 console.log('success')

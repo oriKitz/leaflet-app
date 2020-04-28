@@ -87,7 +87,7 @@ def query(query_id):
         return abort(403)
 
     form = NewQuery()
-
+    print(form.query)
     if form.validate_on_submit():
         query.only_team = form.only_team.data
         query.only_user = form.only_me.data
