@@ -5,12 +5,14 @@ from geoportal.models import Query, QueryTextParameters, UserMarkedQuery
 import datetime
 from .utils import *
 from flask_login import login_required
+from time import sleep
 
 queries = Blueprint('queries', __name__)
 
 
 @queries.route('/invoke/<int:query_id>/<string:token>', methods=['GET', 'POST'])
 def invoke_query(query_id, token):
+    sleep(12)
     query_text = prepare_query(query_id, request.form)
     try:
         query_results = get_geojson_from_query(query_text)

@@ -2,6 +2,7 @@ from flask_login import current_user
 from geoportal.models import Layer, User, UserMarkedLayer
 from sqlalchemy import and_
 from geoportal import db
+from flask_login import current_user
 
 
 def marked_layers_first(layers):
@@ -24,5 +25,7 @@ def get_allowed_layers():
 
 
 def get_favorite_layers():
-    marked_layers = db.session.query(UserMarkedLayer.layer_id).filter_by(user_id=current_user.id).all()
-    return [layer[0] for layer in marked_layers]
+    if current_user.is_authenticated:
+        marked_layers = db.session.query(UserMarkedLayer.layer_id).filter_by(user_id=current_user.id).all()
+        return [layer[0] for layer in marked_layers]
+    return []

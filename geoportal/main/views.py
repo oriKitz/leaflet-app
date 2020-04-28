@@ -8,5 +8,4 @@ main = Blueprint('main', __name__)
 @main.route('/')
 @main.route('/home')
 def home():
-    print(get_favorite_layers())
     return render_template('home.html', queries=get_allowed_queries(), layers=get_allowed_layers(), favorite_layers=get_favorite_layers())

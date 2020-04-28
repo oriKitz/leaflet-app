@@ -61,6 +61,12 @@ function toggleQueryModal() {
     })
 }
 
+function toggleUserModal() {
+    $(function() {
+        $("#add-user-to-team").modal('toggle')
+    })
+}
+
 
 // Checkboxes:
 

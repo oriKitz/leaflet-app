@@ -87,3 +87,34 @@ $(function() {
         location.reload()
     });
 });
+
+
+function getUserIdByName(username) {
+    var u = $("#user")
+    for (i = 0; i < u.children().length; i++) {
+        var option = u.children()[i]
+        if (option.innerText == username) {
+            return option.id
+        }
+    }
+    return null
+}
+
+$(function() {
+    $('form[id="modal-form-team"]').submit(function(e) {
+        e.preventDefault();
+        var form = $(this);
+        user = $("#user").val()
+        form_serialized = "user=" + getUserIdByName(user)
+        $.ajax({
+            type: "POST",
+            url: '/add-user-to-team',
+            data: form_serialized, // serializes the form's elements.
+            success: function(data)
+            {
+                console.log(data)
+            }
+        });
+        location.reload()
+    });
+});
