@@ -28,6 +28,9 @@ function toggleQueryLayer(token) {
     })
 };
 
+
+// Modals:
+
 function toggleMarkerModal() {
     $(function() {
         $("#add-point").modal('toggle')
@@ -46,8 +49,11 @@ function toggleQueryLayerModal() {
     })
 }
 
-
-// Modals:
+function toggleEditLayerModal() {
+    $(function() {
+        $("#edit-layer").modal('toggle')
+    })
+}
 
 function toggleQueryModal() {
     $(function() {

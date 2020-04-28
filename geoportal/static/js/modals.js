@@ -67,3 +67,23 @@ $(function() {
         location.reload()
     });
 });
+
+$(function() {
+    $('form[id="modal-layer-form-edit"]').submit(function(e) {
+        e.preventDefault();
+        var form = $(this);
+        name = $("#name-edit").val()
+        share_team = $("#share-team-edit").is(":checked")
+        form_serialized = "name=" + name + "&team=" + share_team
+        $.ajax({
+            type: "POST",
+            url: '/edit-layer/' + editedLayerId,
+            data: form_serialized, // serializes the form's elements.
+            success: function(data)
+            {
+                console.log(data)
+            }
+        });
+        location.reload()
+    });
+});

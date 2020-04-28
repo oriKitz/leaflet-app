@@ -25,6 +25,8 @@
     <script src="/static/js/outsource/icons.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="/static/js/outsource/leaflet.contextmenu.js"></script>
+    <script type="text/javascript" src="/static/js/toggles.js"></script>
+    <script type="text/javascript" src="/static/js/buttons.js"></script>
 
     {% if title %}
         <title>{{ title }}</title>
@@ -50,6 +52,7 @@
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('users.logout') }}">Logout</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.index') }}">Admin</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('queries.get_queries') }}">Queries</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('mapping.get_layers') }}">Layers</a></li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('users.login') }}">Login</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('users.register') }}">Register</a></li>
@@ -84,7 +87,6 @@
 <script type="text/javascript" src="/static/js/util.js"></script>
 <script type="text/javascript" src="/static/js/map_utils.js"></script>
 <script type="text/javascript" src="/static/js/modals.js"></script>
-<script type="text/javascript" src="/static/js/toggles.js"></script>
 <script>
     {% block javascript %}{% endblock %}
 </script>

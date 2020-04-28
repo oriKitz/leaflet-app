@@ -218,3 +218,22 @@ $(function() {
         });
     })
 })
+
+$(function() {
+    $('input[name="fav-layer-checkbox"]').on("click", function(e) {
+        input = $(this)
+        checked = input.is(':checked')
+        id = input.attr('id')
+        layerId = id.split("-")[1]
+        formSerialized = "layer_id=" + layerId + "&checkbox=" + checked
+        $.ajax({
+            type: "POST",
+            url: '/favorite-layer',
+            data: formSerialized, // serializes the form's elements.
+            success: function(data)
+            {
+                console.log('success')
+            }
+        });
+    })
+})

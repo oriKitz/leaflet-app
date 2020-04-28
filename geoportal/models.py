@@ -126,3 +126,8 @@ class UserMarkedQuery(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     query_id = db.Column(db.Integer, db.ForeignKey('query.id'))
+
+class UserMarkedLayer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    layer_id = db.Column(db.Integer, db.ForeignKey('layer.id'))

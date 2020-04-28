@@ -1,9 +1,10 @@
-from flask import request, jsonify, abort, Blueprint
+from flask import request, jsonify, abort, Blueprint, render_template
 from geoportal import db
 import geojson
 from geojson import Feature, FeatureCollection
-from flask_login import current_user
-from geoportal.models import User, Layer, Point
+from flask_login import current_user, login_required
+from geoportal.models import User, Layer, Point, UserMarkedLayer
+from .utils import get_allowed_layers, get_favorite_layers
 
 mapping = Blueprint('mapping', __name__)
 
@@ -45,6 +46,19 @@ def create_layer():
     return jsonify({'status': 'success'})
 
 
+@mapping.route('/edit-layer/<int:layer_id>', methods=['POST'])
+def edit_layer(layer_id):
+    layer_name = request.form['name']
+    share_team = request.form['team']
+    layer = Layer.query.get(layer_id)
+    share_team = share_team == 'true'
+    only_user = not share_team
+    layer.name = layer_name
+    layer.only_user = only_user
+    layer.only_team = share_team
+    db.session.commit()
+
+
 @mapping.route('/layer-query', methods=['POST'])
 def craete_layer_with_points():
     json = request.get_json()
@@ -76,3 +90,44 @@ def remove_point(layer_id, lon, lat):
         return jsonify({'status': 'success'})
     else:
         abort(400, "Point doesn't exist")
+
+@mapping.route('/layers')
+@login_required
+def get_layers():
+    layers = get_allowed_layers()
+    return render_template('layers.html', layers=layers, marked_layers=get_favorite_layers())
+
+
+@mapping.route('/favorite-layer', methods=['GET', 'POST'])
+def toggle_favorite_query():
+    layer_id = request.form['layer_id']
+    user_id = current_user.id
+    checkbox = request.form['checkbox'] == 'true'
+    existing_instance = UserMarkedLayer.query.filter_by(layer_id=layer_id, user_id=user_id).first()
+    if existing_instance:
+        if checkbox:
+            abort(400, 'Requesting to mark as favorite but layer already marked.')
+        else:
+            db.session.delete(existing_instance)
+            db.session.commit()
+            return jsonify({'status': 'success'})
+    elif checkbox:
+        marked_layer = UserMarkedLayer(layer_id=layer_id, user_id=user_id)
+        db.session.add(marked_layer)
+        db.session.commit()
+        return jsonify({'status': 'success'})
+    else:
+        abort(400, 'Requesting to unmark as favorite but layer already unmarked.')
+
+
+@mapping.route('/delete-layer/<int:layer_id>', methods=['POST'])
+def delete_layer(layer_id):
+    layer = Layer.query.get(layer_id)
+    if not layer:
+        abort(400, 'Layer does not exist')
+    points = Point.query.filter_by(layer_id=layer_id)
+    for point in points:
+        db.session.delete(point)
+    db.session.delete(layer)
+    db.session.commit()
+    return jsonify({'status': 'success'})
