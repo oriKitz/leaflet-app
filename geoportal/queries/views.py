@@ -81,8 +81,12 @@ def get_queries():
 
 @queries.route('/query/<int:query_id>', methods=['GET', 'POST'])
 def query(query_id):
-    form = NewQuery()
     query = Query.query.get(query_id)
+    if (query.user_id != current_user.id and query.only_user) or \
+        (query.only_team and User.query.get(query.user_id).team_id != current_user.team_id):
+        return abort(401)
+
+    form = NewQuery()
 
     if form.validate_on_submit():
         query.only_team = form.only_team.data
