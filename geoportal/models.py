@@ -62,6 +62,10 @@ class Query(db.Model):
     def get_user(user_id):
         return User.query.get(user_id)
 
+    @property
+    def pretty_last_update_time(self):
+        return self.last_update_time.strftime('%Y-%m-%d %H:%M')
+
 
 class QueryTextParameters(db.Model):
     id = db.Column(db.Integer, primary_key=True)

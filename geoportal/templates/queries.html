@@ -35,7 +35,7 @@
                 {% endif %}
                 <td > <a href="/query/{{ query.id }}">{{ query.query_name }}</a></td>
                 <td>{{ query.user.full_name }}</td>
-                <td style="text-align: left">{{ query.last_update_time }}</td>
+                <td style="text-align: left">{{ query.pretty_last_update_time }}</td>
                 <td>
                     {% if query.only_user %}
                     <span class="fa fa-user"></span>
