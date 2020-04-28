@@ -15,6 +15,7 @@ def invoke_query(query_id, token):
     query_text = prepare_query(query_id, request.form)
     try:
         query_results = get_geojson_from_query(query_text)
+        print(query_results)
         return {'geojson': query_results, 'token': token, 'results_amount': len(query_results['features']), 'query_name': Query.query.get(query_id).query_name}
     except Exception as e:
         return jsonify(error_type=str(type(e)), error_message=str(e), query_name=Query.query.get(query_id).query_name, params=dict(request.form), token=token), 500
@@ -83,7 +84,7 @@ def query(query_id):
     query = Query.query.get(query_id)
     if (query.user_id != current_user.id and query.only_user) or \
         (query.only_team and User.query.get(query.user_id).team_id != current_user.team_id):
-        return abort(401)
+        return abort(403)
 
     form = NewQuery()
 

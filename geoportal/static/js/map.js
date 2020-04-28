@@ -78,8 +78,8 @@ function popUp(f, l){
     var out = [];
     if (f.properties) {
         for (key in f.properties) {
-//            out.push(key+": "+f.properties[key]);
-            out.push(f.properties[key]);
+            out.push(key + ": " + f.properties[key]);
+//            out.push(f.properties[key]);
         }
         l.bindPopup(out.join("<br />"));
     }
