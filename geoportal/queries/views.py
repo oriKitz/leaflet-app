@@ -91,7 +91,6 @@ def query(query_id):
 
         old_query = query.query_text
         query.query_name = form.query_name.data
-        query.db_name = form.db_name.data
         query.query_text = form.query.data
         query.last_update_time = datetime.datetime.now()
         db.session.commit()
@@ -113,12 +112,11 @@ def query(query_id):
 
     elif request.method == 'GET':
         form.query_name.data = query.query_name
-        form.db_name.data = query.db_name
         form.query.data = query.query_text
         form.only_team.data = query.only_team
         form.only_me.data = query.only_user
 
-    return render_template('query.html', title='Edit Query', form=form, fields=['query_name', 'db_name', 'query'], form_title='Edit Query', query_text=query.query_text)
+    return render_template('query.html', title='Edit Query', form=form, fields=['query_name', 'query'], form_title='Edit Query', query_text=query.query_text)
 
 
 @queries.route('/query', methods=['GET', 'POST'])
@@ -128,7 +126,7 @@ def new_query():
         only_team = form.only_team.data
         only_user = form.only_me.data
         public = (not only_team) and (not only_user)
-        query = Query(query_name=form.query_name.data, db_name=form.db_name.data, query_text=form.query.data, user_id=current_user.id, only_user=only_user, only_team=only_team, public=public)
+        query = Query(query_name=form.query_name.data, query_text=form.query.data, user_id=current_user.id, only_user=only_user, only_team=only_team, public=public)
         db.session.add(query)
         db.session.commit()
 
@@ -142,4 +140,4 @@ def new_query():
         flash('Your query has been created!', 'success')
         return jsonify({'query_id': query.id})
         # return redirect(url_for('query', query_id=query.id))
-    return render_template('query.html', title='New Query', form=form, fields=['query_name', 'db_name', 'query'], form_title='Create New Query')
+    return render_template('query.html', title='New Query', form=form, fields=['query_name', 'query'], form_title='Create New Query')
