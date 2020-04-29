@@ -1,21 +1,21 @@
 from flask import request, jsonify, abort, Blueprint, render_template
 from geoportal import db
-import geojson
-from geojson import Feature, FeatureCollection
 from flask_login import current_user, login_required
 from geoportal.models import User, Layer, Point, UserMarkedLayer
-from .utils import get_allowed_layers, get_favorite_layers
+from .utils import get_allowed_layers, get_favorite_layers, get_feature_collection_by_layer
 
 mapping = Blueprint('mapping', __name__)
 
 
 @mapping.route('/points/<int:layer_id>')
 def get_layer_geojson(layer_id):
-    points = Point.query.filter_by(layer_id=layer_id).all()
-    features = []
-    for point in points:
-        features.append(Feature(geometry=geojson.Point((point.lon, point.lat)), properties={'description': point.description}))
-    return FeatureCollection(features)
+    return get_feature_collection_by_layer(layer_id)
+
+
+@mapping.route('/get-all-layers')
+def get_all_layers_points():
+    layers = get_allowed_layers()
+    return {layer.id: get_feature_collection_by_layer(layer.id) for layer in layers}
 
 
 @mapping.route('/point', methods=['GET', 'POST'])

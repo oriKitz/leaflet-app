@@ -17,6 +17,7 @@ $(function() {
              }
         });
         toggleMarkerModal()
+        getAllLayers()
     });
 });
 

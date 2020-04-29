@@ -8,7 +8,7 @@ function toggleLayer(layerId) {
     $(function() {
         var checkbox = $("#checkbox-" + layerId)
         if (checkbox.is(":checked")) {
-            getShowLayer(layerId)
+            showLayer(layerId)
         }
         else {
             userLayers[layerId].removeFrom(map)

@@ -27,6 +27,7 @@ map.addControl(drawControl);
 
 var latestLon, latestLat;
 var userLayers = {}
+var allLayers = {}
 var queryLayers = {}
 var latestLayer;
 var chosenLayerToken;

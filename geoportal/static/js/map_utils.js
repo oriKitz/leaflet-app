@@ -19,17 +19,21 @@ function getIcon() {
     }
 }
 
-function getShowLayer(layerId) {
+function getAllLayers() {
     $(function() {
         $.ajax({
-             type: "GET",
-             url: '/points/' + layerId,
-             success: function(data)
-             {
-                 addUserLayer(data, layerId)
-             }
+            type: "GET",
+            url: '/get-all-layers',
+            success: function(data)
+            {
+                allLayers = data
+            }
         });
     })
+}
+
+function showLayer(layerId) {
+    addUserLayer(allLayers[layerId], layerId)
 }
 
 function getPointsFromLayer(layer) {
