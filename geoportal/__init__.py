@@ -1,13 +1,11 @@
 from flask import Flask, render_template, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_user import UserManager
 from .config import Config
 from flask_admin import Admin, helpers
-from flask_security import Security, SQLAlchemyUserDatastore
-from flask_admin.contrib.sqla import ModelView
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+from .utils import MyModelView
 
 
 app = Flask(__name__)
@@ -23,27 +21,13 @@ login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 
 from .models import User, Role, Query, QueryTextParameters, Point, Layer, Team
-# from .utils import MyModelView
 
-# user_manager = UserManager(app, db, User)
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Team, db.session))
-admin.add_view(ModelView(Query, db.session))
-admin.add_view(ModelView(QueryTextParameters, db.session))
-admin.add_view(ModelView(Point, db.session))
-admin.add_view(ModelView(Layer, db.session))
-# admin.add_view(MyModelView(User, db.session))
-# user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-# security = Security(app, user_datastore)
-#
-# @security.context_processor
-# def security_context_processor():
-#     return dict(
-#         admin_base_template=admin.base_template,
-#         admin_view=admin.index_view,
-#         h=helpers,
-#         get_url=url_for
-#     )
+admin.add_view(MyModelView(Team, db.session))
+admin.add_view(MyModelView(Query, db.session))
+admin.add_view(MyModelView(QueryTextParameters, db.session))
+admin.add_view(MyModelView(Point, db.session))
+admin.add_view(MyModelView(Layer, db.session))
+admin.add_view(MyModelView(User, db.session))
 
 from geoportal.main.views import main
 from geoportal.mapping.views import mapping

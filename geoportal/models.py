@@ -29,6 +29,12 @@ class User(db.Model, UserMixin):
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
 
+    def has_role(self, role_name):
+        for role in self.roles:
+            if role.name == role_name:
+                return True
+        return False
+
 
 class Role(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
