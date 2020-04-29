@@ -196,6 +196,7 @@
 {% block fileend %}
 <script src="/static/js/map.js"></script>
 <script>
+    initMap({{ preferences.starting_lon }}, {{ preferences.starting_lat }}, {{ preferences.starting_zoom }})
     getAllLayers()
     getAllQueriesParams()
 </script>

@@ -21,6 +21,7 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary='user_roles')
     layers = db.relationship('Layer', backref='user', lazy=True)
     queries = db.relationship('Query', backref='user', lazy=True)
+    preferences = db.relationship('UserPreferences', backref='user', lazy=True)
 
     def __repr__(self):
         return f"'{self.username}', '{self.email}'"
@@ -137,7 +138,16 @@ class UserMarkedQuery(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     query_id = db.Column(db.Integer, db.ForeignKey('query.id'))
 
+
 class UserMarkedLayer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     layer_id = db.Column(db.Integer, db.ForeignKey('layer.id'))
+
+
+class UserPreferences(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    starting_lon = db.Column(db.Float, default=37.485509)
+    starting_lat = db.Column(db.Float, default=33.247876)
+    starting_zoom = db.Column(db.Integer, default=6)

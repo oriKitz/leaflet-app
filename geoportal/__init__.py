@@ -21,14 +21,15 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 
-from .models import User, Role, Query, QueryTextParameters, Point, Layer, Team
+from .models import User, Role, Query, QueryTextParameters, Point, Layer, Team, UserPreferences
 
+admin.add_view(MyModelView(User, db.session))
+admin.add_view(MyModelView(UserPreferences, db.session))
 admin.add_view(MyModelView(Team, db.session))
-admin.add_view(MyModelView(Query, db.session))
-admin.add_view(MyModelView(QueryTextParameters, db.session))
 admin.add_view(MyModelView(Point, db.session))
 admin.add_view(MyModelView(Layer, db.session))
-admin.add_view(MyModelView(User, db.session))
+admin.add_view(MyModelView(Query, db.session))
+admin.add_view(MyModelView(QueryTextParameters, db.session))
 
 from geoportal.main.views import main
 from geoportal.mapping.views import mapping

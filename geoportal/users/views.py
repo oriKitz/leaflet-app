@@ -1,8 +1,8 @@
 from flask import render_template, url_for, request, jsonify, redirect, flash, abort, Blueprint
 from geoportal import  db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
-from .forms import RegistrationForm, LoginForm, TeamForm
-from geoportal.models import User, Team
+from .forms import RegistrationForm, LoginForm, TeamForm, PreferencesForm
+from geoportal.models import User, Team, UserPreferences
 
 users = Blueprint('users', __name__)
 
@@ -18,6 +18,9 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
+        preferences = UserPreferences(user_id=user.id)
+        db.session.add(preferences)
+        db.session.commit()
         return redirect(url_for('users.login'))
     return render_template('register.html', title='Register', form=form, fields=['username', 'email', 'first_name', 'last_name', 'password', 'confirm_password'])
 
@@ -44,10 +47,25 @@ def logout():
     return redirect(url_for('main.home'))
 
 
-@users.route("/account")
+@users.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', title='Account')
+    form = PreferencesForm()
+    current_preference = UserPreferences.query.filter_by(user_id=current_user.id).first()
+
+    if request.method == 'POST':
+        print(form.starting_zoom.data)
+        current_preference.starting_lon = form.starting_lon.data or current_preference.starting_lon or UserPreferences.starting_lon.default.arg
+        current_preference.starting_lat = form.starting_lat.data or current_preference.starting_lat or UserPreferences.starting_lat.default.arg
+        current_preference.starting_zoom = form.starting_zoom.data or current_preference.starting_zoom or UserPreferences.starting_zoom.default.arg
+        db.session.commit()
+
+    elif request.method == 'GET':
+        form.starting_lon.data = current_preference.starting_lon
+        form.starting_lat.data = current_preference.starting_lat
+        form.starting_zoom.select = current_preference.starting_zoom
+
+    return render_template('account.html', title='Account', form=form)
 
 
 @users.route("/register-team", methods=['GET', 'POST'])

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DecimalField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from geoportal.models import User
 
@@ -29,6 +29,13 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+
+class PreferencesForm(FlaskForm):
+    starting_lon = DecimalField('Starting longitude', rounding=False, places=6)
+    starting_lat = DecimalField('Starting latitude', rounding=False, places=6)
+    starting_zoom = SelectField('Starting zoom', choices=[(None, '---')] + [(n, n) for n in range(1, 21)])
+    submit = SubmitField('Save')
 
 
 class TeamForm(FlaskForm):

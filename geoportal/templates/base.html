@@ -50,6 +50,7 @@
                                 <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
                             {% endif %}
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('users.logout') }}">Logout</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('users.account') }}">Account</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('queries.get_queries') }}">Queries</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('mapping.get_layers') }}">Layers</a></li>
                             {% if current_user.team_id %}

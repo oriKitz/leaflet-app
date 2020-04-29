@@ -1,20 +1,21 @@
-var map = L.map('myMap', {
+var map, drawnItems, drawControl;
+map = L.map('myMap', {
     contextmenu: true,
     contextmenuWidth: 140,
     contextmenuItems: [{
         text: 'Center map here',
         callback: centerMap
     }]
-}).setView([32.1525104, 34.8601608], 13);
+}).setView([33.247876, 37.485509], 6);
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const tiles = L.tileLayer(tileUrl, { attribution });
 tiles.addTo(map);
 
-var drawnItems = new L.FeatureGroup();
+drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
-var drawControl = new L.Control.Draw({
+drawControl = new L.Control.Draw({
     draw: {
         circle: false
     },
@@ -24,6 +25,10 @@ var drawControl = new L.Control.Draw({
 });
 
 map.addControl(drawControl);
+
+function initMap(lon, lat, zoom) {
+    map.setView([lat, lon], zoom);
+}
 
 var latestLon, latestLat;
 var userLayers = {}
