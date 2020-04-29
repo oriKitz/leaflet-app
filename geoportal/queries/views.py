@@ -1,11 +1,13 @@
 from flask import render_template, request, jsonify, flash, abort, Blueprint
-from geoportal import db
+from geoportal import db, app
 from .forms import NewQuery
 from geoportal.models import Query, QueryTextParameters, UserMarkedQuery
 import datetime
 from .utils import *
 from flask_login import login_required
-from time import sleep
+import os
+from werkzeug.utils import secure_filename
+import pandas as pd
 
 queries = Blueprint('queries', __name__)
 
@@ -146,3 +148,21 @@ def new_query():
         return jsonify({'query_id': query.id})
         # return redirect(url_for('query', query_id=query.id))
     return render_template('query.html', title='New Query', form=form, fields=['query_name', 'query'], form_title='Create New Query')
+
+
+@queries.route('/upload-file', methods=['POST'])
+def upload_file():
+    file = request.files['file']
+    extension = file.filename[file.filename.rfind('.') + 1:]
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(file_path)
+    if extension == 'csv':
+        df = pd.read_csv(file_path)
+    elif extension == 'xlsx':
+        df = pd.read_excel(file_path)
+    else:
+        df = None
+    geojson_res = get_geojson_from_df(df)
+    os.remove(file_path)
+    return {'geojson': geojson_res, 'results_amount': len(geojson_res['features']), 'filename': file.filename}

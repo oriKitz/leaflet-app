@@ -48,15 +48,23 @@ def prepare_query(query_id, parameters_dict):
 
 
 def get_geojson_from_query(query):
+    return get_geojson_from_df(get_df_from_query(query))
+
+
+def get_geojson_from_df(df):
+    features = df.apply(get_feature_from_row, axis=1).values.tolist()
+    collection = FeatureCollection(features)
+    return collection
+
+
+def get_df_from_query(query):
     con = sqlite3.connect('geoportal/db/places.db')
     cur = con.cursor()
     cur.execute(query)
     data = cur.fetchall()
     columns = [row[0] for row in cur.description]
     df = pd.DataFrame(columns=columns, data=data)
-    features = df.apply(get_feature_from_row, axis=1).values.tolist()
-    collection = FeatureCollection(features)
-    return collection
+    return df
 
 
 def get_feature_from_row(row):

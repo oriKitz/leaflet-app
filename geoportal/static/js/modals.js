@@ -55,7 +55,7 @@ $(function() {
                 layer: getPointsFromLayer(layer)}
         $.ajax({
              type: "POST",
-             url: '/layer-query',
+             url: '/layer-from-query',
              dataType: 'json',
              contentType: 'application/json',
              data: JSON.stringify(data),

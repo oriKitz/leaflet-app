@@ -59,7 +59,7 @@ def edit_layer(layer_id):
     db.session.commit()
 
 
-@mapping.route('/layer-query', methods=['POST'])
+@mapping.route('/layer-from-query', methods=['POST'])
 def craete_layer_with_points():
     json = request.get_json()
     layer_name = json['name']

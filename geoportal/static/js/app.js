@@ -22,6 +22,25 @@ function paging() {
     });
 }
 
+$(function() {
+    $('form[id="geofile-upload"]').submit(function(e) {
+        e.preventDefault();
+        file = $("#geofile")[0].files[0]
+        var formData = new FormData()
+        formData.append('file', file)
+        $.ajax({
+            type: "POST",
+            url: '/upload-file',
+            data: formData,
+            processData: false,  // tell jQuery not to process the data
+            contentType: false,  // tell jQuery not to set contentType
+            success: function(data) {
+                addLayer(data['geojson'], data['filename'])
+            }
+        })
+    })
+});
+
 function getParametersFormHTML(data, queryId) {
     formHTML = ''
     for (i = 0; i < data.length; i++) {

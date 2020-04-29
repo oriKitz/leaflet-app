@@ -127,6 +127,15 @@
 <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#run-query">
   <span class="fa fa-plus mr-2"></span>Custom Query
 </button>
+<br>
+<form id="geofile-upload">
+    <div class="form-group">
+        <label for="geofile" class="mt-1">Upload a file:</label>
+        <input type="file" id="geofile" name="geofile" accept=".csv, .xlsx">
+    </div>
+    <button type="submit">Upload</button>
+</form>
+
 <div class="modal fade" id="run-query" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

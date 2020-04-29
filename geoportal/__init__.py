@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config.from_object(__name__ + '.Config')
 app.config['SECRET_KEY'] = '9ed456ae10f7eb034612afd2a46790bf'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/site.db'
+app.config['UPLOAD_FOLDER'] = r'e:\temp\uploads'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 migrate = Migrate(app, db)
