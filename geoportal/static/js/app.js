@@ -1,4 +1,5 @@
 var queryRunningInstances = {}
+var queriesParams = {}
 
 function filterQueries() {
     input = document.getElementById("queries_search");
@@ -63,20 +64,26 @@ $(function() {
         form = button.next()
         queryId = button.attr('id')
         console.log(queryId)
-        $.ajax({
-            type: "GET",
-            url: '/get_query_parameters/' + queryId,
-            success: function(data) {
-                formHTML = getParametersFormHTML(data, queryId)
-                formHTML += '<button type="button" class="btn cancel" name="cancel-btn" onclick="closeForm(' + queryId +')">Close</button>'
-                console.log(formHTML)
-                form.addClass("mt-2")
-                form.html(formHTML)
-            }
-        })
+        formHTML = getParametersFormHTML(queriesParams[queryId], queryId)
+        formHTML += '<button type="button" class="btn cancel" name="cancel-btn" onclick="closeForm(' + queryId +')">Close</button>'
+        console.log(formHTML)
+        form.addClass("mt-2")
+        form.html(formHTML)
     })
 })
 ;
+
+function getAllQueriesParams() {
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: '/get-all-queries-params',
+            success: function(data) {
+                queriesParams = data
+            }
+        })
+    })
+};
 
 $(function() {
     $('form[id="params-form"]').submit(function(e) {

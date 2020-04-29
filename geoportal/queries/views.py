@@ -50,6 +50,12 @@ def query_parameters(query_id):
     return jsonify([param.serialize() for param in Query.query.get(query_id).parameters])
 
 
+@queries.route('/get-all-queries-params')
+def get_all_queries_parameters():
+    queries = get_allowed_queries()
+    return {query.id: [param.serialize() for param in Query.query.get(query.id).parameters] for query in queries}
+
+
 @queries.route('/favorite', methods=['GET', 'POST'])
 def toggle_favorite_query():
     query_id = request.form['query_id']
