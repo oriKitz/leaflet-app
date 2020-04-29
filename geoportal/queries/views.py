@@ -124,6 +124,7 @@ def query(query_id):
 
 
 @queries.route('/query', methods=['GET', 'POST'])
+@login_required
 def new_query():
     form = NewQuery()
     if form.validate_on_submit():

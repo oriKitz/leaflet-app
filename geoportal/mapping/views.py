@@ -91,6 +91,7 @@ def remove_point(layer_id, lon, lat):
     else:
         abort(400, "Point doesn't exist")
 
+
 @mapping.route('/layers')
 @login_required
 def get_layers():
