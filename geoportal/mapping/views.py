@@ -58,6 +58,7 @@ def edit_layer(layer_id):
     layer.only_user = only_user
     layer.only_team = share_team
     db.session.commit()
+    return jsonify({'status': 'success'})
 
 
 @mapping.route('/layer-from-query', methods=['POST'])
