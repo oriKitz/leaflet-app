@@ -94,6 +94,7 @@
 <h5 id="queried-layers-header" class="disply-5 mb-3" style="display: none">Queried Layers:</h5>
 <div id="queried-layers"></div>
 {% if current_user.is_authenticated %}
+<div class="col overflow-medium pl-0">
     <div class="col pl-0" id="private-layers">
         <h5 class="disply-5 mt-3">Your Private Layers:</h5>
         {% for layer in layers %}
@@ -117,6 +118,7 @@
             {% endif %}
         {% endfor %}
     </div>
+</div>
 {% endif %}
 {% endblock left_sidebar %}
 
@@ -195,7 +197,7 @@
 <form class="form-inline my-2 my-lg-0">
     <input class="form-control mr-sm-2 mt-3 mb-2" type="search" placeholder="Search" aria-label="Search" id="queries_search" onkeyup="filterQueries()">
 </form>
-<div class="col-sm-12 pl-0">
+<div class="col-sm-12 pl-0 overflow-big">
     <div class="list-group">
     {% for query in queries %}
         <button name="query-selector" class="list-group-item pb-1 pt-1" id="{{ query.id }}" style="text-align: justify;">

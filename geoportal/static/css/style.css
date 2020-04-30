@@ -30,6 +30,16 @@
   transform: translate(0%, -50%);
 }
 
+.overflow-big {
+  height: 700px;
+  overflow: auto;
+}
+
+.overflow-medium {
+  height: 630px;
+  overflow: auto;
+}
+
 @keyframes ldio-np83wdslazg {
   0% { opacity: 1 }
   100% { opacity: 0 }
