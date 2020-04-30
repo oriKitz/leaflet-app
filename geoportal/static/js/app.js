@@ -17,9 +17,9 @@ function filterQueries() {
     }
 }
 
-function paging() {
+function paging(tableId) {
     $(function () {
-      $('#full-results').DataTable();
+      $('#' + tableId).DataTable();
       $('.dataTables_length').addClass('bs-select');
     });
 }
@@ -123,7 +123,7 @@ $(function() {
                  success: function(data)
                  {
                      $("#results-table").html(data)
-                     paging()
+                     paging("full-results")
                  }
             });
         } else {
