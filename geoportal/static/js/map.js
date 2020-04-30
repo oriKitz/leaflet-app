@@ -1,5 +1,4 @@
-var map, drawnItems, drawControl;
-map = L.map('myMap', {
+var map = L.map('myMap', {
     contextmenu: true,
     contextmenuWidth: 140,
     contextmenuItems: [{
@@ -12,10 +11,10 @@ const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const tiles = L.tileLayer(tileUrl, { attribution });
 tiles.addTo(map);
 
-drawnItems = new L.FeatureGroup();
+var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
-drawControl = new L.Control.Draw({
+var drawControl = new L.Control.Draw({
     draw: {
         circle: false
     },
