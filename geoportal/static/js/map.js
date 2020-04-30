@@ -43,10 +43,25 @@ function centerMap (e) {
 map.on('draw:created', function (e) {
     var type = e.layerType;
     var layer = e.layer;
-    latestLat = layer._latlng.lat
-    latestLon = layer._latlng.lng
-    latestLayer = layer
-    toggleMarkerModal()
+    debugger
+    if (type == 'marker') {
+        latestLat = layer._latlng.lat
+        latestLon = layer._latlng.lng
+        latestLayer = layer
+        toggleMarkerModal()
+    }
+    if (type == 'rectangle') {
+        southWest = layer._bounds._southWest
+        northEast = layer._bounds._northEast
+        fromLat = southWest.lat
+        toLat = northEast.lat
+        fromLon = southWest.lng
+        toLon = northEast.lng
+        $("#from-lon").val(fromLon)
+        $("#from-lat").val(fromLat)
+        $("#to-lon").val(toLon)
+        $("#to-lat").val(toLat)
+    }
 });
 
 map.on("popupopen", function(e) {

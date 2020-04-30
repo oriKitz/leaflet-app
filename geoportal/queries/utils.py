@@ -35,15 +35,37 @@ def handle_parameter(param_value, param_type):
     return f"'{param_value}'" # It's ok when using sqlite
 
 
-def prepare_query(query_id, parameters_dict):
-    query = Query.query.get(query_id)
-    query_text = query.query_text
+def prepare_query_with_polygon_params(query_text, form_data, polygon_parameters):
+    query_polygon_pattern = '{in-polygon-[^@]*@[^}]*}'
+    polygon_param_string = re.findall(query_polygon_pattern, query_text)[0]
+    lon_col = polygon_parameters.lon_column
+    lat_col = polygon_parameters.lat_column
+    print(form_data)
+    print(polygon_param_string)
+    query_text = query_text.replace(polygon_param_string, f"({lon_col} between {form_data['from-lon']} and {form_data['to-lon']} and {lat_col} between {form_data['from-lat']} and {form_data['to-lat']})")
+    return query_text
+
+
+def prepare_query_with_parameters(query_text, form_data, parameters):
     query_params_pattern = '{([^}]*):([^}]*)}'
     query_params = re.findall(query_params_pattern, query_text)
     query_params_dict = dict(query_params)
-    for param_name, param_value in parameters_dict.items():
-        param_type = query_params_dict[param_name]
+    for param_name, param_type in query_params_dict.items():
+        param_value = form_data[param_name]
         query_text = query_text.replace('{' + f'{param_name}:{param_type}' + '}', handle_parameter(param_value, param_type))
+    return query_text
+
+
+def prepare_query(query_id, form_data):
+    query = Query.query.get(query_id)
+    query_text = query.query_text
+    query_params = query.parameters
+    query_polygon_params = query.polygon_parameters
+    query_text = prepare_query_with_parameters(query_text, form_data, query_params)
+    if query_polygon_params:
+        query_text = prepare_query_with_polygon_params(query_text, form_data, query_polygon_params[0])
+    print(query_text)
+
     return query_text
 
 

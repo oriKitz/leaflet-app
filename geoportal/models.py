@@ -61,6 +61,7 @@ class Query(db.Model):
     only_team = db.Column(db.Boolean, default=False)
     public = db.Column(db.Boolean, default=True)
     parameters = db.relationship('QueryTextParameters', backref='query', lazy=True)
+    polygon_parameters = db.relationship('QueryPolygonParameters', backref='query', lazy=True)
 
     def __repr__(self):
         return self.query_name
@@ -82,6 +83,13 @@ class QueryTextParameters(db.Model):
 
     def serialize(self):
         return {c: getattr(self, c) for c in inspect(self).attrs.keys() if c != 'query'}
+
+
+class QueryPolygonParameters(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    query_id = db.Column(db.Integer, db.ForeignKey('query.id'), nullable=False)
+    lon_column = db.Column(db.String(100), nullable=False)
+    lat_column = db.Column(db.String(100), nullable=False)
 
 
 class Layer(db.Model):

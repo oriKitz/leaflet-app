@@ -1,5 +1,6 @@
 var queryRunningInstances = {}
 var queriesParams = {}
+var queriesPolygonParams = {}
 
 function filterQueries() {
     input = document.getElementById("queries_search");
@@ -52,6 +53,17 @@ function getParametersFormHTML(data, queryId) {
             formHTML += '<input class="form-control form-control-lg" type="text" id="' + data[i].parameter_name + '" name="' + data[i].parameter_name + '">'
         }
     }
+    if (queryId in queriesPolygonParams) {
+        formHTML += '<p class="mb-0"><b>Draw a rectangle to fill these fields</b></p>'
+        formHTML += '<label class="form-control-label">From lon:</label>'
+        formHTML += '<input class="form-control form-control-lg" type="text" id="from-lon" name="from-lon">'
+        formHTML += '<label class="form-control-label">To lon:</label>'
+        formHTML += '<input class="form-control form-control-lg" type="text" id="to-lon" name="to-lon">'
+        formHTML += '<label class="form-control-label">From lat:</label>'
+        formHTML += '<input class="form-control form-control-lg" type="text" id="from-lat" name="from-lat">'
+        formHTML += '<label class="form-control-label">To lat:</label>'
+        formHTML += '<input class="form-control form-control-lg" type="text" id="to-lat" name="to-lat">'
+    }
     formHTML += '<button class="btn">Query</button>'
     formHTML += '<a class="btn" href="/query/' + queryId +'" target="_blank">Edit</a>'
     return formHTML
@@ -77,6 +89,19 @@ function getAllQueriesParams() {
             url: '/get-all-queries-params',
             success: function(data) {
                 queriesParams = data
+            }
+        })
+    })
+};
+
+function getAllQueriesPolygonParams() {
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: '/get-all-queries-polygon-params',
+            success: function(data) {
+                queriesPolygonParams = data
+                console.log(data)
             }
         })
     })

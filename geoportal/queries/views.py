@@ -1,7 +1,7 @@
 from flask import render_template, request, jsonify, flash, abort, Blueprint
 from geoportal import db, app
 from .forms import NewQuery
-from geoportal.models import Query, QueryTextParameters, UserMarkedQuery
+from geoportal.models import Query, QueryTextParameters, UserMarkedQuery, QueryPolygonParameters
 import datetime
 from .utils import *
 from flask_login import login_required
@@ -14,6 +14,7 @@ queries = Blueprint('queries', __name__)
 
 @queries.route('/invoke/<int:query_id>/<string:token>', methods=['GET', 'POST'])
 def invoke_query(query_id, token):
+    print(request.form)
     query_text = prepare_query(query_id, request.form)
     try:
         query_results = get_geojson_from_query(query_text)
@@ -56,6 +57,12 @@ def get_all_queries_parameters():
     return {query.id: [param.serialize() for param in Query.query.get(query.id).parameters] for query in queries}
 
 
+@queries.route('/get-all-queries-polygon-params')
+def get_all_queries_poly_params():
+    queries = get_allowed_queries()
+    return {query.id: [query.polygon_parameters[0].lon_column, query.polygon_parameters[0].lat_column] for query in queries if query.polygon_parameters}
+
+
 @queries.route('/favorite', methods=['GET', 'POST'])
 def toggle_favorite_query():
     query_id = request.form['query_id']
@@ -95,7 +102,6 @@ def query(query_id):
         return abort(403)
 
     form = NewQuery()
-    print(form.query)
     if form.validate_on_submit():
         query.only_team = form.only_team.data
         query.only_user = form.only_me.data
@@ -117,6 +123,17 @@ def query(query_id):
             for param in query_params:
                 query_parameter = QueryTextParameters(query_id=query.id, parameter_name=param[0], parameter_type=param[1])
                 db.session.add(query_parameter)
+            db.session.commit()
+
+            if query.polygon_parameters:
+                db.session.delete(query.polygon_parameters[0])
+                db.session.commit()
+            query_polygon_pattern = '{in-polygon-([^@]*)@([^}]*)}'
+            polygon_limits = re.findall(query_polygon_pattern, form.query.data)
+            if polygon_limits:
+                polygon_limit = polygon_limits[0]
+                poly = QueryPolygonParameters(query_id=query.id, lon_column=polygon_limit[0], lat_column=polygon_limit[1])
+                db.session.add(poly)
             db.session.commit()
 
         flash('Your query has been updated!', 'success')
@@ -148,6 +165,13 @@ def new_query():
         for param in query_params:
             query_parameter = QueryTextParameters(query_id=query.id, parameter_name=param[0], parameter_type=param[1])
             db.session.add(query_parameter)
+
+        query_polygon_pattern = '{in-polygon-([^@]*)@([^}]*)}'
+        polygon_limits = re.findall(query_polygon_pattern, form.query.data)
+        if polygon_limits:
+            polygon_limit = polygon_limits[0]
+            poly = QueryPolygonParameters(query_id=query.id, lon_column=polygon_limit[0], lat_column=polygon_limit[1])
+            db.session.add(poly)
 
         db.session.commit()
         flash('Your query has been created!', 'success')
