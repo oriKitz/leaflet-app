@@ -2,13 +2,6 @@
 
 {% block left_sidebar %}
 {% if current_user.is_authenticated %}
-<form id="geofile-upload">
-    <div class="form-group">
-        <label for="geofile" class="mt-1">Upload a file:</label>
-        <input type="file" id="geofile" name="geofile" accept=".csv, .xlsx">
-    </div>
-    <button type="submit">Upload</button>
-</form>
 <button type="button" class="btn btn-primary mb-3 mt-3" data-toggle="modal" data-target="#add-layer">
   <span class="fa fa-plus mr-2"></span>New Layer
 </button>
@@ -124,7 +117,20 @@
 
 {% block content %}
 <div id="myMap" class="mt-4"></div>
-<input type="text" id="current-point">
+<div class="row m-0 p-0 justify-content-around">
+    <div class="col m-0 p-0">
+        <input type="text" id="current-point">
+    </div>
+    <div class="col m-0 p-0" style="text-align: right; float: right">
+        <form id="geofile-upload" class="form-inline" style="text-align: right; float: right">
+            <div class="form-group">
+                <label for="geofile" class="mt-1 mr-3">Upload a file:</label>
+                <input type="file" id="geofile" name="geofile" accept=".csv, .xlsx">
+            </div>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</div>
 <div class="col mt-2" id="queries-running"></div>
 
 
