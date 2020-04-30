@@ -1,5 +1,5 @@
 from flask_login import current_user
-from geoportal.models import Layer, User, UserMarkedLayer, Point
+from geoportal.models import Layer, User, UserMarkedLayer, Point, QueryTextParameters
 from sqlalchemy import and_
 from geoportal import db
 from flask_login import current_user

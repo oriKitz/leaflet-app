@@ -172,3 +172,17 @@ def upload_file():
     geojson_res = get_geojson_from_df(df)
     os.remove(file_path)
     return {'geojson': geojson_res, 'results_amount': len(geojson_res['features']), 'filename': file.filename}
+
+
+@queries.route('/delete-query/<int:query_id>', methods=['POST'])
+def delete_query(query_id):
+    q = Query.query.get(query_id)
+    marked_query = UserMarkedQuery.query.filter_by(user_id=current_user.id, query_id=query_id).first()
+    if marked_query:
+        db.session.delete(marked_query)
+    query_params = q.parameters
+    for param in query_params:
+        db.session.delete(param)
+    db.session.delete(q)
+    db.session.commit()
+    return jsonify({'status': 'success'})

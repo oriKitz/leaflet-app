@@ -14,11 +14,12 @@
                 <th>Author</th>
                 <th style="text-align: left">Last update time</th>
                 <th>Permissions</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody style="text-align: center">
         {% for query in queries %}
-            <tr>
+            <tr id="{{ query.id }}">
                 <td>
                     <div class="pretty p-icon p-toggle p-plain">
                         <input id="mark-{{ query.id }}" type="checkbox" name="fav-checkbox" class=""/>
@@ -43,6 +44,11 @@
                     <span class="fa fa-users"></span>
                     {% else %}
                     <span class="fa fa-globe"></span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if query.user_id == current_user.id %}
+                        <button class="btn btn-outline-danger" onclick="deleteQuery({{ query.id }})">Delete</button>
                     {% endif %}
                 </td>
             </tr>

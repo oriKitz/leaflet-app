@@ -28,3 +28,18 @@ function editLayer(layerId) {
         $("#name-edit")[0].value = layer_name
     })
 }
+
+function deleteQuery(queryId) {
+    $(function() {
+        if (confirm("Are you sure you want do delete this layer?")) {
+            $.ajax({
+                 type: "POST",
+                 url: '/delete-query/' + queryId,
+                 success: function(data)
+                 {
+                     $("#" + queryId).css('display', 'none')
+                 }
+            });
+        }
+    })
+}
