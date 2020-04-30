@@ -96,8 +96,11 @@ function popUp(f, l){
     var out = [];
     if (f.properties) {
         for (key in f.properties) {
-            out.push(key + ": " + f.properties[key]);
-//            out.push(f.properties[key]);
+            if (key == 'description') {
+                out.push(f.properties[key]);
+            } else {
+                out.push(key + ": " + f.properties[key]);
+            }
         }
         l.bindPopup(out.join("<br />"));
     }
