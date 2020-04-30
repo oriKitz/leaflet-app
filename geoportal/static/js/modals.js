@@ -4,7 +4,7 @@ $(function() {
         var form = $(this);
         var url = form.attr('action');
         given_description = $("#description").val()
-        chosen_layer = $("#layer").val()
+        chosen_layer = $("#layer option:selected")[0].id
         form_serialized = "description=" + given_description + "&layer=" + chosen_layer + "&lon=" + latestLon + "&lat=" + latestLat
         $.ajax({
              type: "POST",
@@ -21,6 +21,15 @@ $(function() {
     });
 });
 
+function getLayerHtml(data) {
+    var layerName = data['layer_name']
+    var layerId = data['layer_id']
+    var htmlData = '<div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between">'
+    htmlData += '<input type="checkbox" id="checkbox-' + layerId  + '" class="custom-control-input" onclick="toggleLayer(' + layerId + ')">'
+    htmlData += '<label class="custom-control-label" for="checkbox-' + layerId + '">' + layerName + '</label></div>'
+    return htmlData
+}
+
 $(function() {
     $('form[id="modal-layer-form"]').submit(function(e) {
         e.preventDefault();
@@ -29,15 +38,23 @@ $(function() {
         share_team = $("#share-team").is(":checked")
         form_serialized = "name=" + name + "&team=" + share_team
         $.ajax({
-             type: "POST",
-             url: '/layer',
-             data: form_serialized, // serializes the form's elements.
-             success: function(data)
-             {
-                 console.log(data)
-             }
+            type: "POST",
+            url: '/layer',
+            data: form_serialized, // serializes the form's elements.
+            success: function(data)
+            {
+                layerHtml = getLayerHtml(data)
+                console.log(data)
+                if (data['private']) {
+                    $("#private-layers").append(layerHtml)
+                } else {
+                    $("#team-layers").append(layerHtml)
+                }
+                $("#layer").append('<option id="' + data['layer_id'] + '">' + data['layer_name'] + '</option>')
+                getAllLayers()
+                toggleLayerModal()
+            }
         });
-        location.reload()
     });
 });
 
@@ -55,17 +72,25 @@ $(function() {
                 team: share_team,
                 layer: getPointsFromLayer(layer)}
         $.ajax({
-             type: "POST",
-             url: '/layer-from-query',
-             dataType: 'json',
-             contentType: 'application/json',
-             data: JSON.stringify(data),
-             success: function(data)
-             {
-                 console.log(data)
-             }
+            type: "POST",
+            url: '/layer-from-query',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(data)
+            {
+                layerHtml = getLayerHtml(data)
+                console.log(data)
+                if (data['private']) {
+                    $("#private-layers").append(layerHtml)
+                } else {
+                    $("#team-layers").append(layerHtml)
+                }
+                $("#layer").append('<option id="' + data['layer_id'] + '">' + data['layer_name'] + '</option>')
+                getAllLayers()
+                toggleQueryLayerModal()
+            }
         });
-        location.reload()
     });
 });
 

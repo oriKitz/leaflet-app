@@ -68,25 +68,29 @@
 <h5 id="queried-layers-header" class="disply-5 mb-3" style="display: none">Queried Layers:</h5>
 <div id="queried-layers"></div>
 {% if current_user.is_authenticated %}
-    <h5 class="disply-5 mt-3">Your Private Layers:</h5>
-    {% for layer in layers %}
-        {% if layer.only_user %}
-        <div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between">
-            <input type="checkbox" id="checkbox-{{ layer.id }}" class="custom-control-input" onclick="toggleLayer({{ layer.id }})">
-            <label class="custom-control-label" for="checkbox-{{ layer.id }}">{{ layer.name }}</label>
-            <!--<button class="btn btn-outline-info ml-5" style="">Share Team</button>-->
-        </div>
-        {% endif %}
-    {% endfor %}
-    <h5 class="disply-5 mt-3">Team Layers:</h5>
-    {% for layer in layers %}
-        {% if layer.only_team %}
-        <div class="row ml-2 mt-3 custom-control custom-checkbox">
-            <input type="checkbox" id="checkbox-{{ layer.id }}" class="custom-control-input" onclick="toggleLayer({{ layer.id }})">
-            <label class="custom-control-label" for="checkbox-{{ layer.id }}">{{ layer.name }}</label>
-        </div>
-        {% endif %}
-    {% endfor %}
+    <div class="col pl-0" id="private-layers">
+        <h5 class="disply-5 mt-3">Your Private Layers:</h5>
+        {% for layer in layers %}
+            {% if layer.only_user %}
+            <div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between">
+                <input type="checkbox" id="checkbox-{{ layer.id }}" class="custom-control-input" onclick="toggleLayer({{ layer.id }})">
+                <label class="custom-control-label" for="checkbox-{{ layer.id }}">{{ layer.name }}</label>
+                <!--<button class="btn btn-outline-info ml-5" style="">Share Team</button>-->
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="col pl-0" id="team-layers">
+        <h5 class="disply-5 mt-3">Team Layers:</h5>
+        {% for layer in layers %}
+            {% if layer.only_team %}
+            <div class="row ml-2 mt-3 custom-control custom-checkbox">
+                <input type="checkbox" id="checkbox-{{ layer.id }}" class="custom-control-input" onclick="toggleLayer({{ layer.id }})">
+                <label class="custom-control-label" for="checkbox-{{ layer.id }}">{{ layer.name }}</label>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 {% endif %}
 {% endblock left_sidebar %}
 
@@ -113,7 +117,7 @@
                         <label for="layer">Select Layer:</label>
                         <select class="form-control" id="layer">
                             {% for layer in layers %}
-                                <option id="layer.id">{{ layer.name }}, {{ layer.user.username }}</option>
+                                <option id="{{ layer.id }}">{{ layer.name }}</option>
                             {% endfor %}
                         </select>
                     </div>

@@ -23,11 +23,8 @@ def update_point():
     lon = request.form['lon']
     lat = request.form['lat']
     description = request.form['description']
-    layer = request.form['layer']
-    layer_name = layer[:layer.rfind(',')]
-    layer_username = layer[layer.rfind(',') + 2:]
-    user = User.query.filter_by(username=layer_username).first()
-    layer = Layer.query.filter_by(name=layer_name).filter_by(user_id=user.id).first()
+    layer_id = request.form['layer']
+    layer = Layer.query.get(layer_id)
     point = Point(layer_id=layer.id, lon=lon, lat=lat, description=description)
     db.session.add(point)
     db.session.commit()
@@ -43,7 +40,7 @@ def create_layer():
     layer = Layer(name=name, user_id=current_user.id, only_user=only_user, only_team=share_team)
     db.session.add(layer)
     db.session.commit()
-    return jsonify({'status': 'success'})
+    return jsonify({'layer_id': layer.id, 'layer_name': name, 'private': not share_team})
 
 
 @mapping.route('/edit-layer/<int:layer_id>', methods=['POST'])
@@ -73,7 +70,7 @@ def craete_layer_with_points():
         p = Point(layer_id=layer.id, lon=point[0], lat=point[1], description=point[2])
         db.session.add(p)
     db.session.commit()
-    return jsonify({'status': 'success'})
+    return jsonify({'layer_id': layer.id, 'layer_name': layer_name, 'private': not share_team})
 
 
 @mapping.route('/remove-point/<int:layer_id>/<float:lon>/<float:lat>', methods=['POST'])
