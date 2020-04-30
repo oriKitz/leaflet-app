@@ -59,14 +59,11 @@ function getParametersFormHTML(data, queryId) {
 
 $(function() {
     $('button[name="query-selector"]').on("click", function() {
-        console.log($(this))
         button = $(this)
         form = button.next()
         queryId = button.attr('id')
-        console.log(queryId)
         formHTML = getParametersFormHTML(queriesParams[queryId], queryId)
         formHTML += '<button type="button" class="btn cancel" name="cancel-btn" onclick="closeForm(' + queryId +')">Close</button>'
-        console.log(formHTML)
         form.addClass("mt-2")
         form.html(formHTML)
     })
@@ -105,7 +102,6 @@ $(function() {
                  }
             });
         } else {
-            console.log(form.serialize())
             queryId = form.attr('name')
             var tempId = makeId(10)
             var htmlData = '<div class="row" id="' + tempId + '">'
@@ -151,7 +147,6 @@ $(function() {
         htmlData += '<div class="loadingio-spinner-spinner-kly0lqmixgq"><div class="ldio-np83wdslazg"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>'
         htmlData += '<p class="mt-2 pt-1">Running custom query</p></div>'
         $("#queries-running").append(htmlData)
-        console.log(form_serialized)
         $.ajax({
             type: "POST",
             url: '/run_query/' + tempId,
@@ -188,7 +183,6 @@ $(function() {
 $(function() {
     $('#query-form').submit(function(e) {
         e.preventDefault();
-        console.log('here')
         var form = $(this);
         query = $("#query")[0].innerText
         selectIndex = query.toLowerCase().indexOf('select')
@@ -203,7 +197,6 @@ $(function() {
             data: serialized, // serializes the form's elements.
             success: function(data)
             {
-                console.log('success')
                 if (window.location.pathname.endsWith('query')) { // Only when we are in the edit page
                     window.location.href = "/query/" + data['query_id'];
                 }
@@ -214,18 +207,15 @@ $(function() {
 
 $(function() {
     $('#load-results').on("click", function() {
-        console.log('here')
         pathname = window.location.pathname
         splittedPathname = pathname.split("/")
         queryId = splittedPathname[splittedPathname.length - 1]
-        console.log(queryId)
         $.ajax({
             type: "GET",
             url: '/get_query_parameters/' + queryId,
             success: function(data) {
                 formHTML = getParametersFormHTML(data, queryId)
                 formHTML += '<button type="button" class="btn cancel" name="cancel-btn" onclick="closeFormQuery()">Close</button>'
-                console.log(formHTML)
                 $("#params-form").html(formHTML)
             }
         })
@@ -239,7 +229,6 @@ $(function() {
         id = input.attr('id')
         queryId = id.split("-")[1]
         formSerialized = "query_id=" + queryId + "&checkbox=" + checked
-        console.log(formSerialized)
         $.ajax({
             type: "POST",
             url: '/favorite',

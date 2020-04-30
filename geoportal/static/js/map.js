@@ -41,7 +41,6 @@ function centerMap (e) {
 }
 
 map.on('draw:created', function (e) {
-    console.log(e)
     var type = e.layerType;
     var layer = e.layer;
     latestLat = layer._latlng.lat
@@ -59,7 +58,6 @@ map.on("popupopen", function(e) {
 })
 
 map.on("click", function(e) {
-    console.log(e)
     var lat = e.latlng.lat.toFixed(6)
     var lon = e.latlng.lng.toFixed(6)
     $(function() {

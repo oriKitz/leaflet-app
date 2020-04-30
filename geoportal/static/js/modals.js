@@ -12,7 +12,6 @@ $(function() {
              data: form_serialized, // serializes the form's elements.
              success: function(data)
              {
-                 console.log(data)
                  userLayers[data['layer_id']].addLayer(latestLayer)
              }
         });
@@ -44,7 +43,6 @@ $(function() {
             success: function(data)
             {
                 layerHtml = getLayerHtml(data)
-                console.log(data)
                 if (data['private']) {
                     $("#private-layers").append(layerHtml)
                 } else {
@@ -80,7 +78,6 @@ $(function() {
             success: function(data)
             {
                 layerHtml = getLayerHtml(data)
-                console.log(data)
                 if (data['private']) {
                     $("#private-layers").append(layerHtml)
                 } else {
