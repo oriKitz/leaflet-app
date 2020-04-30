@@ -28,26 +28,30 @@ def update_point():
     point = Point(layer_id=layer.id, lon=lon, lat=lat, description=description)
     db.session.add(point)
     db.session.commit()
-    return jsonify({'status': 'success', 'layer_id': layer.id})
+    return jsonify({'status': 'success', 'layer_id': layer.id, 'color': layer.default_color})
 
 
 @mapping.route('/layer', methods=['GET', 'POST'])
 def create_layer():
     name = request.form['name']
+    color = request.form['color']
     share_team = request.form['team']
     share_team = share_team == 'true'
     only_user = not share_team
-    layer = Layer(name=name, user_id=current_user.id, only_user=only_user, only_team=share_team)
+    layer = Layer(name=name, user_id=current_user.id, only_user=only_user, only_team=share_team, default_color=color)
     db.session.add(layer)
     db.session.commit()
-    return jsonify({'layer_id': layer.id, 'layer_name': name, 'private': not share_team})
+    return jsonify({'layer_id': layer.id, 'layer_name': name, 'private': not share_team, 'color': color})
 
 
 @mapping.route('/edit-layer/<int:layer_id>', methods=['POST'])
 def edit_layer(layer_id):
     layer_name = request.form['name']
     share_team = request.form['team']
+    color = request.form['color']
     layer = Layer.query.get(layer_id)
+    if color != '---':
+        layer.default_color = color
     share_team = share_team == 'true'
     only_user = not share_team
     layer.name = layer_name
@@ -62,15 +66,17 @@ def craete_layer_with_points():
     layer_name = json['name']
     share_team = json['team']
     points = json['layer']
+    color = json['color']
+    print(color)
     only_user = not share_team
-    layer = Layer(name=layer_name, user_id=current_user.id, only_user=only_user, only_team=share_team)
+    layer = Layer(name=layer_name, user_id=current_user.id, only_user=only_user, only_team=share_team, default_color=color)
     db.session.add(layer)
     db.session.commit()
     for point in points:
         p = Point(layer_id=layer.id, lon=point[0], lat=point[1], description=point[2])
         db.session.add(p)
     db.session.commit()
-    return jsonify({'layer_id': layer.id, 'layer_name': layer_name, 'private': not share_team})
+    return jsonify({'layer_id': layer.id, 'layer_name': layer_name, 'private': not share_team, 'color': color})
 
 
 @mapping.route('/remove-point/<int:layer_id>/<float:lon>/<float:lat>', methods=['POST'])

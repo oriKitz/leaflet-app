@@ -19,6 +19,13 @@ function getIcon() {
     }
 }
 
+function getLayerIcon(layerId) {
+    layerDiv = window.document.getElementById("layer-" + layerId)
+    color = layerDiv.dataset.color
+    icon = coloredIcons[color]
+    return icon
+}
+
 function getAllLayers() {
     $(function() {
         $.ajax({

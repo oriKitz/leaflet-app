@@ -7,13 +7,14 @@ $(function() {
         chosen_layer = $("#layer option:selected")[0].id
         form_serialized = "description=" + given_description + "&layer=" + chosen_layer + "&lon=" + latestLon + "&lat=" + latestLat
         $.ajax({
-             type: "POST",
-             url: '/point',
-             data: form_serialized, // serializes the form's elements.
-             success: function(data)
-             {
-                 userLayers[data['layer_id']].addLayer(latestLayer)
-             }
+            type: "POST",
+            url: '/point',
+            data: form_serialized, // serializes the form's elements.
+            success: function(data)
+            {
+                latestLayer.options.icon = coloredIcons[data['color']]
+                userLayers[data['layer_id']].addLayer(latestLayer)
+            }
         });
         toggleMarkerModal()
         getAllLayers()
@@ -23,7 +24,8 @@ $(function() {
 function getLayerHtml(data) {
     var layerName = data['layer_name']
     var layerId = data['layer_id']
-    var htmlData = '<div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between">'
+    var color = data['color']
+    var htmlData = '<div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between" id="layer-' + layerId + '" data-color="' + color + '">'
     htmlData += '<input type="checkbox" id="checkbox-' + layerId  + '" class="custom-control-input" onclick="toggleLayer(' + layerId + ')">'
     htmlData += '<label class="custom-control-label" for="checkbox-' + layerId + '">' + layerName + '</label></div>'
     return htmlData
@@ -35,7 +37,8 @@ $(function() {
         var form = $(this);
         name = $("#name").val()
         share_team = $("#share-team").is(":checked")
-        form_serialized = "name=" + name + "&team=" + share_team
+        color = $("#color").val()
+        form_serialized = "name=" + name + "&team=" + share_team + "&color=" + color
         $.ajax({
             type: "POST",
             url: '/layer',
@@ -60,15 +63,17 @@ $(function() {
     $('form[id="modal-layer-form-query"]').submit(function(e) {
         e.preventDefault();
         layerToken = chosenLayerToken
-        chosenLayerToken = ''
         var form = $(this);
         name = $("#layer-name").val()
         share_team = $("#layer-share-team").is(":checked")
-        form_serialized = "name=" + name + "&team=" + share_team
+        color = $("#color2").val()
         layer = queryLayers[layerToken]
+        chosenLayerToken = ''
         data = {name: name,
                 team: share_team,
-                layer: getPointsFromLayer(layer)}
+                layer: getPointsFromLayer(layer),
+                color: color}
+        debugger
         $.ajax({
             type: "POST",
             url: '/layer-from-query',
@@ -77,6 +82,7 @@ $(function() {
             data: JSON.stringify(data),
             success: function(data)
             {
+                console.log(data)
                 layerHtml = getLayerHtml(data)
                 if (data['private']) {
                     $("#private-layers").append(layerHtml)
@@ -97,7 +103,8 @@ $(function() {
         var form = $(this);
         name = $("#name-edit").val()
         share_team = $("#share-team-edit").is(":checked")
-        form_serialized = "name=" + name + "&team=" + share_team
+        color = $("#edit-color").val()
+        form_serialized = "name=" + name + "&team=" + share_team + "&color=" + color
         $.ajax({
             type: "POST",
             url: '/edit-layer/' + editedLayerId,

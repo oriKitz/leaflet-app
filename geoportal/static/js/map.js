@@ -124,9 +124,10 @@ function addLayer(data, queryName) {
 
 
 function addUserLayer(data, layerId) {
+    icon = getLayerIcon(layerId)
     feature = L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
         return L.marker(latlng, {
-            icon: blueIcon,
+            icon: icon,
             contextmenu: true,
             contextmenuItems: [{
                 text: 'Remove marker',

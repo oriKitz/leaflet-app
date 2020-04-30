@@ -26,6 +26,19 @@
                         <label for="name" class="control-label">Name:</label>
                         <input class="form-control" id="name">
                     </div>
+                    <div class="form-group">
+                        <label for="color">Select Color:</label>
+                        <select class="form-control" id="color">
+                            <option>blue</option>
+                            <option>green</option>
+                            <option>red</option>
+                            <option>orange</option>
+                            <option>violet</option>
+                            <option>gold</option>
+                            <option>grey</option>
+                            <option>black</option>
+                        </select>
+                    </div>
                     <div class="form-check m-1 mb-3">
                         <input class="form-check-input" id="share-team" name="share_team" type="checkbox" value="y">
                         <label class="form-check-label" for="share-team">Share layer to my team</label>
@@ -52,6 +65,19 @@
                         <label for="layer-name" class="control-label">Name:</label>
                         <input class="form-control" id="layer-name">
                     </div>
+                    <div class="form-group">
+                        <label for="color2">Select Color:</label>
+                        <select class="form-control" id="color2">
+                            <option>blue</option>
+                            <option>green</option>
+                            <option>red</option>
+                            <option>orange</option>
+                            <option>violet</option>
+                            <option>gold</option>
+                            <option>grey</option>
+                            <option>black</option>
+                        </select>
+                    </div>
                     <div class="form-check m-1 mb-3">
                         <input class="form-check-input" id="layer-share-team" name="share_team" type="checkbox" value="y">
                         <label class="form-check-label" for="layer-share-team">Share layer to my team</label>
@@ -72,7 +98,7 @@
         <h5 class="disply-5 mt-3">Your Private Layers:</h5>
         {% for layer in layers %}
             {% if layer.only_user %}
-            <div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between">
+            <div class="row ml-2 mt-3 custom-control custom-checkbox justify-content-between" id="layer-{{ layer.id }}" data-color="{{ layer.default_color }}">
                 <input type="checkbox" id="checkbox-{{ layer.id }}" class="custom-control-input" onclick="toggleLayer({{ layer.id }})">
                 <label class="custom-control-label" for="checkbox-{{ layer.id }}">{{ layer.name }}</label>
                 <!--<button class="btn btn-outline-info ml-5" style="">Share Team</button>-->
@@ -84,7 +110,7 @@
         <h5 class="disply-5 mt-3">Team Layers:</h5>
         {% for layer in layers %}
             {% if layer.only_team %}
-            <div class="row ml-2 mt-3 custom-control custom-checkbox">
+            <div class="row ml-2 mt-3 custom-control custom-checkbox" id="layer-{{ layer.id }}" data-color="{{ layer.default_color }}">
                 <input type="checkbox" id="checkbox-{{ layer.id }}" class="custom-control-input" onclick="toggleLayer({{ layer.id }})">
                 <label class="custom-control-label" for="checkbox-{{ layer.id }}">{{ layer.name }}</label>
             </div>
