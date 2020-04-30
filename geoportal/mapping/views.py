@@ -123,6 +123,9 @@ def delete_layer(layer_id):
     layer = Layer.query.get(layer_id)
     if not layer:
         abort(400, 'Layer does not exist')
+    marked_layer = UserMarkedLayer.layer.filter_by(user_id=current_user.id, layer_id=layer_id).first()
+    if marked_layer:
+        db.session.delete(marked_layer)
     points = Point.query.filter_by(layer_id=layer_id)
     for point in points:
         db.session.delete(point)
