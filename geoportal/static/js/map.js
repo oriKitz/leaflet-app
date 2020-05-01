@@ -44,6 +44,7 @@ map.on('draw:created', function (e) {
     var type = e.layerType;
     var layer = e.layer;
     if (type == 'marker') {
+//        layer.options.icon = coloredIcons['violet']
         latestLat = layer._latlng.lat
         latestLon = layer._latlng.lng
         latestLayer = layer

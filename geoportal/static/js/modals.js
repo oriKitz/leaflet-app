@@ -12,7 +12,7 @@ $(function() {
             data: form_serialized, // serializes the form's elements.
             success: function(data)
             {
-//                latestLayer.options.icon = coloredIcons[data['color']]
+                latestLayer.options.icon = coloredIcons[data['color']]
                 userLayers[data['layer_id']].addLayer(latestLayer)
             }
         });
