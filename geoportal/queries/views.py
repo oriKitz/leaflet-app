@@ -95,8 +95,10 @@ def get_queries():
 
 
 @queries.route('/query/<int:query_id>', methods=['GET', 'POST'])
+@login_required
 def query(query_id):
     query = Query.query.get(query_id)
+
     if (query.user_id != current_user.id and query.only_user) or \
         (query.only_team and User.query.get(query.user_id).team_id != current_user.team_id):
         return abort(403)
