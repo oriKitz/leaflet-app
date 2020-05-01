@@ -1,5 +1,5 @@
 #myMap {
-    height: 400px;
+    height: 400px; /* Should be 600 in production */
 }
 
 #query {
@@ -37,6 +37,11 @@
 
 .overflow-medium {
   max-height: 84vh;
+  overflow: auto;
+}
+
+.overflow-small {
+  max-height: 20vh;
   overflow: auto;
 }
 
