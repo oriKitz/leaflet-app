@@ -242,6 +242,17 @@ $(function() {
                 formHTML = getParametersFormHTML(data, queryId)
                 formHTML += '<button type="button" class="btn cancel" name="cancel-btn" onclick="closeFormQuery()">Close</button>'
                 $("#params-form").html(formHTML)
+
+
+
+//                formHTML += '<label class="form-control-label">From lon:</label>'
+//                formHTML += '<input class="form-control form-control-lg" type="text" id="from-lon" name="from-lon">'
+//                formHTML += '<label class="form-control-label">To lon:</label>'
+//                formHTML += '<input class="form-control form-control-lg" type="text" id="to-lon" name="to-lon">'
+//                formHTML += '<label class="form-control-label">From lat:</label>'
+//                formHTML += '<input class="form-control form-control-lg" type="text" id="from-lat" name="from-lat">'
+//                formHTML += '<label class="form-control-label">To lat:</label>'
+//                formHTML += '<input class="form-control form-control-lg" type="text" id="to-lat" name="to-lat">'
             }
         })
     });
