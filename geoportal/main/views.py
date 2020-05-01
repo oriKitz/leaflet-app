@@ -9,4 +9,6 @@ main = Blueprint('main', __name__)
 @main.route('/')
 @main.route('/home')
 def home():
-    return render_template('home.html', queries=get_allowed_queries(), layers=get_allowed_layers(), favorite_layers=get_favorite_layers(), preferences=current_user.preferences[0])
+    if current_user.is_authenticated:
+        return render_template('home.html', queries=get_allowed_queries(), layers=get_allowed_layers(), favorite_layers=get_favorite_layers(), preferences=current_user.preferences[0])
+    return render_template('home.html', queries=get_allowed_queries(), layers=get_allowed_layers(), favorite_layers=get_favorite_layers())

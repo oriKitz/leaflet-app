@@ -233,8 +233,12 @@
 
 {% block fileend %}
 <script src="/static/js/map.js"></script>
+{% if current_user.is_authenticated %}
 <script>
     initMap({{ preferences.starting_lon }}, {{ preferences.starting_lat }}, {{ preferences.starting_zoom }})
+</script>
+{% endif %}
+<script>
     getAllLayers()
     getAllQueriesParams()
     getAllQueriesPolygonParams()
