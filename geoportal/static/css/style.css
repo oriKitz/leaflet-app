@@ -31,12 +31,12 @@
 }
 
 .overflow-big {
-  height: 700px;
   overflow: auto;
+  max-height: 80vh;
 }
 
 .overflow-medium {
-  height: 620px;
+  height: 800px;
   overflow: auto;
 }
 

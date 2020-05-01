@@ -107,6 +107,9 @@ function popUp(f, l){
 }
 
 function addLayer(data, queryName) {
+    layersCol = $("#layers-col")
+    layersCol.css('height', window.outerHeight - 150 - layersCol.offset().top)
+
     icon = getIcon()
     feature = L.geoJSON(data,{onEachFeature:popUp, pointToLayer: function(geoJsonPoint, latlng) {
         return L.marker(latlng, {

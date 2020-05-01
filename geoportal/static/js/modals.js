@@ -73,7 +73,7 @@ $(function() {
                 team: share_team,
                 layer: getPointsFromLayer(layer),
                 color: color}
-        debugger
+
         $.ajax({
             type: "POST",
             url: '/layer-from-query',
