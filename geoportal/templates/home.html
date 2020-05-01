@@ -84,10 +84,10 @@
         </div>
     </div>
 </div>
-<h5 id="queried-layers-header" class="disply-5 mb-3" style="display: none">Queried Layers:</h5>
-<div id="queried-layers"></div>
-{% if current_user.is_authenticated %}
 <div id="layers-col" class="col overflow-medium pl-0">
+<h5 id="queried-layers-header" class="disply-5 mb-3" style="display: none">Queried Layers:</h5>
+<div class="col pl-0" id="queried-layers"></div>
+{% if current_user.is_authenticated %}
     <div class="col pl-0" id="private-layers">
         <h5 class="disply-5 mt-3">Your Private Layers:</h5>
         {% for layer in layers %}
@@ -111,8 +111,8 @@
             {% endif %}
         {% endfor %}
     </div>
-</div>
 {% endif %}
+</div>
 {% endblock left_sidebar %}
 
 {% block content %}
