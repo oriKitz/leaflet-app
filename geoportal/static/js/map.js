@@ -16,10 +16,9 @@ map.addLayer(drawnItems);
 
 var drawControl = new L.Control.Draw({
     draw: {
-        circle: false
-    },
-    edit: {
-        featureGroup: drawnItems
+        circle: false,
+        polyline: false,
+        polygon: false
     }
 });
 
@@ -44,7 +43,6 @@ map.on('draw:created', function (e) {
     var type = e.layerType;
     var layer = e.layer;
     if (type == 'marker') {
-//        layer.options.icon = coloredIcons['violet']
         latestLat = layer._latlng.lat
         latestLon = layer._latlng.lng
         latestLayer = layer
