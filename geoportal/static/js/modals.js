@@ -68,12 +68,11 @@ $(function() {
         share_team = $("#layer-share-team").is(":checked")
         color = $("#color2").val()
         layer = queryLayers[layerToken]
-        chosenLayerToken = ''
         data = {name: name,
                 team: share_team,
                 layer: getPointsFromLayer(layer),
                 color: color}
-
+        chosenLayerToken = ''
         $.ajax({
             type: "POST",
             url: '/layer-from-query',

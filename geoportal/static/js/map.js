@@ -125,9 +125,9 @@ function addLayer(data, queryName) {
             }]
         })
     }})
+    queryLayers[token] = feature
     feature.addTo(map);
     var token = makeId(10)
-    queryLayers[token] = feature
     var layerHtml = '<div class="row custom-control custom-checkbox justify-content-between ml-2 mt-3">'
     layerHtml += '<button type="button" name="add-custom-layer" data-token="' + token + '" class="btn btn-xs p-0 pb-3 mr-2 pr-3" data-toggle="modal" data-target="#add-layer-query"><span class="fa fa-plus mr-2"></span></button>'
     layerHtml += '<input type="checkbox" id="checkbox-' + token + '" class="custom-control-input" onclick="toggleQueryLayer(' + "'" + token + "'" +')">'
