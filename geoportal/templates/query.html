@@ -8,9 +8,8 @@
                     <h4 class="border-bottom mb-2 pb-1">{{ form_title }}</h4>
                     <div>
                         <p class="m-0">Query text can contain variables to later be formatted.</p>
-                        <p class="m-0">For example: SELECT * FROM users WHERE id = {user_id:number} AND creation_date > {min_time:datetime}</p>
-                        <p class="m-0"><b>Allowed datatypes:</b> number / datetime / string. You must specify datatypes!</p>
-                        <p class="m-0">DO NOT put apostrophes around string datatypes. The server will do that for you.</p>
+                        <p class="m-0">For example: SELECT * FROM users WHERE id = {user_id:number} AND creation_date > {min_time:datetime} AND ip IN ({ip_addresses:stringslist})</p>
+                        <p class="m-0"><b>Allowed datatypes:</b> number / datetime / string / numberslist / stringslist. You must specify datatypes!</p>
                         <p class="m-0 mt-2">You can also set a polygon variable to be easily formatted layer. The syntax is:</p>
                         <p class="m-0">SELECT ... FROM ... WHERE ... AND {in-polygon-longitude_column_name@latitude_column_name}</p>
                         <p class="mb-3 mt-2 border-bottom">Query results must contain lon,lat columns or longitude,latitude columns</p>

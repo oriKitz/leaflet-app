@@ -26,10 +26,24 @@ def get_allowed_queries():
     return queries
 
 
+def discard_apostrophes(element):
+    if (element[0] == '"' and element[-1] == '"') or (element[0] == "'" and element[-1] == "'"):
+        element = element[1:-1]
+    return element
+
+
 def handle_parameter(param_value, param_type):
     if param_type == 'string':
+        param_value = discard_apostrophes(param_value)
         return f"'{param_value}'"
     if param_type == 'number':
+        return param_value
+    if param_type in ['stringslist', 'stringlist']:
+        values_list = param_value.split(',')
+        values_list = [val.strip() for val in values_list]
+        values_list = [discard_apostrophes(val) for val in values_list]
+        return f'''"{'", "'.join(values_list)}"'''
+    if param_type in ['numberslist', 'numberlist']:
         return param_value
     # If we got here it means we have datetime
     return f"'{param_value}'" # It's ok when using sqlite
