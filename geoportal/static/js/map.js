@@ -43,7 +43,6 @@ function centerMap (e) {
 map.on('draw:created', function (e) {
     var type = e.layerType;
     var layer = e.layer;
-    debugger
     if (type == 'marker') {
         latestLat = layer._latlng.lat
         latestLon = layer._latlng.lng
