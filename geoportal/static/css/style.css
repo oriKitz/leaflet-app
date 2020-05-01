@@ -36,7 +36,7 @@
 }
 
 .overflow-medium {
-  height: 800px;
+  max-height: 84vh;
   overflow: auto;
 }
 
