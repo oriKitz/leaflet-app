@@ -75,6 +75,8 @@ function addMarkerToLayer(e) {
     var marker = e.relatedTarget
     var lon = marker.feature.geometry.coordinates[0]
     var lat = marker.feature.geometry.coordinates[1]
+    var popupContent = marker._popup._content
+    $("#description").val(popupContent)
     latestLon = lon
     latestLat = lat
     toggleMarkerModal()
