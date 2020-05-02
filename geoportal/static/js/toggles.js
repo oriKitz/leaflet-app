@@ -9,9 +9,13 @@ function toggleLayer(layerId) {
         var checkbox = $("#checkbox-" + layerId)
         if (checkbox.is(":checked")) {
             showLayer(layerId)
+            $('option[name="viewed-' + layerId + '"]').css('display', '')
+            $('option[name="unviewed-' + layerId + '"]').css('display', 'none')
         }
         else {
             userLayers[layerId].removeFrom(map)
+            $('option[name="viewed-' + layerId + '"]').css('display', 'none')
+            $('option[name="unviewed-' + layerId + '"]').css('display', '')
         }
     })
 };

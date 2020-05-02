@@ -150,8 +150,12 @@
                     <div class="form-group">
                         <label for="layer">Select Layer:</label>
                         <select class="form-control" id="layer">
+                            <option>---</option>
                             {% for layer in layers %}
-                                <option id="{{ layer.id }}">{{ layer.name }}</option>
+                                <option id="{{ layer.id }}" style="display: none" name="viewed-{{ layer.id }}">{{ layer.name }}</option>
+                            {% endfor %}
+                            {% for layer in layers %}
+                                <option id="{{ layer.id }}" name="unviewed-{{ layer.id }}">{{ layer.name }}</option>
                             {% endfor %}
                         </select>
                     </div>

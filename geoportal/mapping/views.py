@@ -24,6 +24,8 @@ def update_point():
     lat = request.form['lat']
     description = request.form['description']
     layer_id = request.form['layer']
+    if not layer_id:
+        return abort(400)
     layer = Layer.query.get(layer_id)
     point = Point(layer_id=layer.id, lon=lon, lat=lat, description=description)
     db.session.add(point)
