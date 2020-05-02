@@ -3,16 +3,32 @@ $(function() {
         e.preventDefault();
         var form = $(this);
         var url = form.attr('action');
-        given_description = $("#description").val()
-        chosen_layer = $("#layer option:selected")[0].id
-        form_serialized = "description=" + given_description + "&layer=" + chosen_layer + "&lon=" + latestLon + "&lat=" + latestLat
+        givenDescription = $("#description").val()
+        chosenLayer = $("#layer option:selected")[0].id
+        formSerialized = "description=" + givenDescription + "&layer=" + chosenLayer + "&lon=" + latestLon + "&lat=" + latestLat
         $.ajax({
             type: "POST",
             url: '/point',
-            data: form_serialized, // serializes the form's elements.
+            data: formSerialized, // serializes the form's elements.
             success: function(data)
             {
+                latestLayer = L.marker([latestLat, latestLon], {
+                    contextmenu: true,
+                    contextmenuItems: [{
+                        text: 'Remove marker',
+                        callback: removeMarker,
+                        index: 0
+                    }, {
+                        text: 'Hide marker',
+                        callback: hideMarker,
+                        index: 1
+                    }, {
+                        separator: true,
+                        index: 2
+                    }]
+                })
                 latestLayer.options.icon = coloredIcons[data['color']]
+                latestLayer.bindPopup(givenDescription)
                 userLayers[data['layer_id']].addLayer(latestLayer)
             }
         });
