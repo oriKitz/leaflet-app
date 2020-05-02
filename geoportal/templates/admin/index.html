@@ -1,6 +1,9 @@
 {% extends 'admin/master.html' %}
 {% block body %}
 {{ super() }}
+{% if not current_user.has_role('Admin') %}
+<h5 class="display-5">You are not welcome here.</h5>
+{% endif %}
 <div class="container">
     <a class="btn btn-primary" href="/"><i class="glyphicon glyphicon-chevron-left"></i> Back</a>
 </div>
